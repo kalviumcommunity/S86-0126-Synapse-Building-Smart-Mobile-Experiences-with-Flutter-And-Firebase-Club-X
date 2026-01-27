@@ -336,18 +336,25 @@ class _InteractiveCounterState extends State<InteractiveCounter> {
   void _increment() {
     setState(() {
       _count++;
+      debugPrint('🔢 Counter incremented to: $_count');
     });
   }
 
   void _decrement() {
     setState(() {
-      if (_count > 0) _count--;
+      if (_count > 0) {
+        _count--;
+        debugPrint('🔢 Counter decremented to: $_count');
+      } else {
+        debugPrint('⚠️ Counter cannot go below 0');
+      }
     });
   }
 
   void _reset() {
     setState(() {
       _count = 0;
+      debugPrint('🔄 Counter reset to 0');
     });
   }
 
@@ -478,6 +485,7 @@ class _ColorChangerWidgetState extends State<ColorChangerWidget> {
   void _changeColor() {
     setState(() {
       _colorIndex = (_colorIndex + 1) % _colors.length;
+      debugPrint('🎨 Color changed to: ${_colorNames[_colorIndex]}');
     });
   }
 
@@ -614,6 +622,7 @@ class _ToggleSwitchWidgetState extends State<ToggleSwitchWidget> {
               onChanged: (value) {
                 setState(() {
                   _isEnabled = value;
+                  debugPrint('🔘 Toggle switched to: ${value ? "ON" : "OFF"}');
                 });
               },
               activeTrackColor: Colors.green,
