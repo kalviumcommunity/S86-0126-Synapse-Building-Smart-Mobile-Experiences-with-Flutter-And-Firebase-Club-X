@@ -83,4 +83,5 @@ class DefaultFirebaseOptions {
     authDomain: 'clubx-365d0.firebaseapp.com',
     storageBucket: 'clubx-365d0.firebasestorage.app',
   );
+
 }
