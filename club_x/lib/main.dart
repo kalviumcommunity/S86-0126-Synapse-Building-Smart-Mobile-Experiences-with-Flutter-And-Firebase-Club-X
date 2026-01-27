@@ -1,23 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/widget_tree_demo.dart';
+import 'screens/stateless_stateful_demo.dart';
 
 void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Club-X',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const WidgetTreeDemo(),
-    );
-  }
+  runApp(const StatelessStatefulDemo());
 }
