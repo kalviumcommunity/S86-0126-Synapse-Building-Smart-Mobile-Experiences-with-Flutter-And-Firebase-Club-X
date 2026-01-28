@@ -5,6 +5,7 @@ A comprehensive Flutter application demonstrating core concepts including statel
 ## 📱 Project Overview
 
 This project demonstrates fundamental Flutter concepts:
+
 - **Stateless & Stateful Widgets** - Understanding the two building blocks of Flutter apps
 - **Widget Tree Architecture** - How widgets form hierarchical structures
 - **Reactive UI Model** - How Flutter automatically updates UI based on state changes
@@ -19,6 +20,18 @@ This project demonstrates fundamental Flutter concepts:
 - ✅ Theme switching (Light/Dark mode)
 - ✅ Comprehensive documentation and code examples
 
+### 🧭 Navigation
+
+This app uses **GoRouter** for modern declarative routing:
+
+| Route       | Path           | Screen                    |
+| ----------- | -------------- | ------------------------- |
+| Home        | `/`            | Stateless & Stateful Demo |
+| Responsive  | `/responsive`  | Responsive Layout Demo    |
+| Widget Tree | `/widget-tree` | Widget Tree Demo          |
+
+Navigate using: `context.pushNamed('route-name')` or `context.go('/path')`
+
 ---
 
 ## 🎯 Sprint #2: Creating and Using Stateless and Stateful Widgets
@@ -28,9 +41,11 @@ This project demonstrates fundamental Flutter concepts:
 Flutter has two fundamental types of widgets that form the building blocks of every app:
 
 #### StatelessWidget
+
 A **StatelessWidget** is a widget that **does not store any mutable state**. Once built, it remains unchanged until rebuilt by its parent widget.
 
 **Characteristics:**
+
 - Immutable - cannot change after creation
 - No internal state to manage
 - Rebuilt only by parent widget
@@ -38,6 +53,7 @@ A **StatelessWidget** is a widget that **does not store any mutable state**. Onc
 - Perfect for static content
 
 **When to use:**
+
 - Displaying static text, labels, or titles
 - Showing icons and images
 - Creating reusable UI components that don't change
@@ -45,6 +61,7 @@ A **StatelessWidget** is a widget that **does not store any mutable state**. Onc
 - Presenting information that doesn't need updating
 
 **Example:**
+
 ```dart
 class GreetingWidget extends StatelessWidget {
   final String name;
@@ -59,9 +76,11 @@ class GreetingWidget extends StatelessWidget {
 ```
 
 #### StatefulWidget
+
 A **StatefulWidget** is a widget that **maintains internal state** that can change during the app's lifecycle.
 
 **Characteristics:**
+
 - Mutable - can change over time
 - Has internal state managed by a State object
 - Can update itself using setState()
@@ -69,6 +88,7 @@ A **StatefulWidget** is a widget that **maintains internal state** that can chan
 - Perfect for dynamic content
 
 **When to use:**
+
 - Interactive elements (buttons, forms, sliders)
 - Displaying data that changes over time
 - Animations and transitions
@@ -76,6 +96,7 @@ A **StatefulWidget** is a widget that **maintains internal state** that can chan
 - Real-time data updates
 
 **Example:**
+
 ```dart
 class CounterWidget extends StatefulWidget {
   @override
@@ -110,6 +131,7 @@ Our demo app showcases both widget types with practical examples:
 #### Stateless Widget Examples
 
 1. **Static Header** - Section headers with icons and descriptions
+
    ```dart
    class StaticHeader extends StatelessWidget {
      final String title;
@@ -121,6 +143,7 @@ Our demo app showcases both widget types with practical examples:
    ```
 
 2. **Info Card** - Static information display
+
    ```dart
    class StaticInfoCard extends StatelessWidget {
      final String title;
@@ -130,6 +153,7 @@ Our demo app showcases both widget types with practical examples:
    ```
 
 3. **Greeting Widget** - Personalized greeting message
+
    ```dart
    class GreetingWidget extends StatelessWidget {
      final String name;
@@ -188,6 +212,7 @@ void _updateState() {
 ```
 
 **Process:**
+
 1. User interacts with the UI (button press, toggle, text input)
 2. Event handler is called
 3. `setState()` is invoked with state changes
@@ -198,14 +223,14 @@ void _updateState() {
 
 ### 📊 Quick Comparison
 
-| Aspect | StatelessWidget | StatefulWidget |
-|--------|----------------|----------------|
-| **State** | No mutable state | Has mutable state |
-| **Updates** | Rebuilt by parent | Updates itself with setState() |
-| **Performance** | Slightly faster | Manages state overhead |
-| **Use Cases** | Static text, icons, labels | Forms, buttons, animations |
-| **Complexity** | Simple, one class | Two classes (widget + state) |
-| **Examples** | Text, Icon, Image, Container | TextField, Checkbox, Slider |
+| Aspect          | StatelessWidget              | StatefulWidget                 |
+| --------------- | ---------------------------- | ------------------------------ |
+| **State**       | No mutable state             | Has mutable state              |
+| **Updates**     | Rebuilt by parent            | Updates itself with setState() |
+| **Performance** | Slightly faster              | Manages state overhead         |
+| **Use Cases**   | Static text, icons, labels   | Forms, buttons, animations     |
+| **Complexity**  | Simple, one class            | Two classes (widget + state)   |
+| **Examples**    | Text, Icon, Image, Container | TextField, Checkbox, Slider    |
 
 ### 💡 Why Separation Matters
 
@@ -245,22 +270,26 @@ Try these interactions in the demo app:
 ### 📸 Screenshots
 
 #### Initial State (Light Mode)
+
 ![Initial State](screenshots/stateless_stateful/initial_state.png)
-*App showing all stateless and stateful widgets in default state*
+_App showing all stateless and stateful widgets in default state_
 
 #### After Interactions
+
 ![After Interactions](screenshots/stateless_stateful/after_interactions.png)
-*Counter increased, color changed, toggle enabled, text entered*
+_Counter increased, color changed, toggle enabled, text entered_
 
 #### Dark Mode
+
 ![Dark Mode](screenshots/stateless_stateful/dark_mode.png)
-*App with dark theme enabled*
+_App with dark theme enabled_
 
 ### 💭 Reflection
 
 **How do Stateful widgets make Flutter apps dynamic?**
 
 Stateful widgets enable dynamic, interactive applications by:
+
 - Storing and managing mutable state
 - Responding to user input in real-time
 - Updating UI automatically when state changes
@@ -269,6 +298,7 @@ Stateful widgets enable dynamic, interactive applications by:
 - Supporting animations and transitions
 
 Without StatefulWidget, every app would be static and non-interactive. StatefulWidget is essential for:
+
 - Forms and input validation
 - Shopping carts and counters
 - Real-time data displays
@@ -298,6 +328,7 @@ By using StatelessWidget for headers, labels, and static content, and StatefulWi
 In Flutter, **everything is a widget**. From simple elements like text and buttons to complex layouts and entire screens - they're all widgets arranged in a tree-like hierarchy.
 
 The **widget tree** is the foundation of how Flutter builds and updates UIs:
+
 - Each widget is a node in the tree
 - Widgets have parent-child relationships
 - The root is typically `MaterialApp` or `CupertinoApp`
@@ -306,6 +337,7 @@ The **widget tree** is the foundation of how Flutter builds and updates UIs:
 ### 🔄 The Reactive UI Model
 
 Flutter's UI is **reactive**, meaning:
+
 1. **State changes trigger rebuilds** - When data changes, Flutter automatically updates the UI
 2. **Efficient updates** - Only affected parts of the widget tree are rebuilt
 3. **Declarative approach** - You describe what the UI should look like, Flutter handles the rest
@@ -378,10 +410,11 @@ MaterialApp (Root Widget)
 Our demo app showcases multiple types of reactive state updates:
 
 #### 1. **Counter State** (`int _counter`)
+
 - **What it does**: Tracks a numeric value that can be incremented, decremented, or reset
-- **Interactive elements**: 
+- **Interactive elements**:
   - Increment button (+1)
-  - Decrement button (-1) 
+  - Decrement button (-1)
   - Reset button (back to 0)
   - FloatingActionButton (quick increment)
 - **UI updates**: Counter display badge, status message, profile statistics
@@ -396,6 +429,7 @@ void _incrementCounter() {
 ```
 
 #### 2. **Background Color State** (`Color _backgroundColor`)
+
 - **What it does**: Cycles through different background colors
 - **Interactive element**: "Change Background Color" button
 - **UI updates**: Entire screen background animates to new color
@@ -412,6 +446,7 @@ void _changeBackgroundColor() {
 ```
 
 #### 3. **Visibility Toggle State** (`bool _isProfileVisible`)
+
 - **What it does**: Shows or hides the profile card widget
 - **Interactive element**: "Toggle Profile Visibility" button
 - **UI updates**: Profile card appears/disappears from the widget tree
@@ -421,14 +456,15 @@ void _changeBackgroundColor() {
 void _toggleProfileVisibility() {
   setState(() {
     _isProfileVisible = !_isProfileVisible;
-    _statusMessage = _isProfileVisible 
-        ? 'Profile card is now visible' 
+    _statusMessage = _isProfileVisible
+        ? 'Profile card is now visible'
         : 'Profile card is now hidden';
   });
 }
 ```
 
 #### 4. **Slider Value State** (`double _sliderValue`)
+
 - **What it does**: Tracks a continuous value from 0 to 100
 - **Interactive element**: Slider widget
 - **UI updates**: Real-time value display, progress indicator
@@ -444,6 +480,7 @@ void _onSliderChanged(double value) {
 ```
 
 #### 5. **Status Message State** (`String _statusMessage`)
+
 - **What it does**: Provides feedback about user interactions
 - **Updates from**: All interactive elements
 - **UI location**: Status card at top of screen
@@ -452,7 +489,9 @@ void _onSliderChanged(double value) {
 ### 📸 Visual State Changes
 
 #### Initial State
+
 When the app first loads:
+
 - Counter: 0
 - Background: White
 - Profile Card: Visible
@@ -460,7 +499,9 @@ When the app first loads:
 - Status: "Welcome to Club-X!"
 
 #### After User Interactions
+
 After clicking increment 5 times, changing background, and adjusting slider:
+
 - Counter: 5
 - Background: Light Blue
 - Profile Card: Visible (showing Posts: 15, Followers: 50, Following: 25)
@@ -468,7 +509,9 @@ After clicking increment 5 times, changing background, and adjusting slider:
 - Status: Updates to reflect last action
 
 #### With Profile Hidden
+
 After toggling profile visibility:
+
 - Profile card disappears from the widget tree
 - Layout adjusts automatically
 - Button text changes to "Show Profile Card"
@@ -489,18 +532,21 @@ Every interactive element in our app uses `setState()` to trigger UI updates:
 ### 💡 Key Learnings
 
 #### Widget Tree Concepts
+
 - **Hierarchy Matters**: Child widgets inherit context from parents
 - **Composition Over Inheritance**: Complex UIs are built by composing simple widgets
 - **Reusability**: Extract repeated widget patterns into methods or classes
 - **Readability**: Proper indentation shows parent-child relationships clearly
 
 #### Reactive UI Benefits
+
 - **Automatic Updates**: No manual DOM manipulation needed
 - **Type Safety**: Compile-time checking prevents many bugs
 - **Hot Reload**: See changes instantly during development
 - **Predictable**: State changes always trigger consistent UI updates
 
 #### setState() Best Practices
+
 - **Only Update Inside setState()**: State changes must be wrapped in `setState()`
 - **Keep It Simple**: Perform simple state updates, not complex calculations
 - **Batch Updates**: Multiple state changes in one `setState()` call are efficient
@@ -538,6 +584,7 @@ Try these interactions to see the reactive UI in action:
 ### 📱 Code Implementation Highlights
 
 #### Stateful Widget Setup
+
 ```dart
 class WidgetTreeDemo extends StatefulWidget {
   const WidgetTreeDemo({super.key});
@@ -553,22 +600,23 @@ class _WidgetTreeDemoState extends State<WidgetTreeDemo> {
   bool _isProfileVisible = true;
   String _statusMessage = 'Welcome to Club-X!';
   double _sliderValue = 50.0;
-  
+
   // State update methods using setState()...
 }
 ```
 
 #### Conditional Widget Rendering
+
 ```dart
 Column(
   children: [
     _buildStatusCard(),
     _buildCounterSection(),
     _buildInteractiveControlsSection(),
-    
+
     // Profile card only appears when _isProfileVisible is true
     if (_isProfileVisible) _buildProfileCard(),
-    
+
     _buildSliderSection(),
     _buildWidgetTreeVisualization(),
   ],
@@ -576,6 +624,7 @@ Column(
 ```
 
 #### Dynamic Values in Widgets
+
 ```dart
 Text(
   '$_counter',  // Counter value updates automatically
@@ -723,28 +772,36 @@ isTablet || isLandscape
 ## 📸 Screenshots
 
 ### Phone - Portrait Mode
-*(Screenshot showing single-column layout on a phone in portrait orientation)*
+
+_(Screenshot showing single-column layout on a phone in portrait orientation)_
+
 - Compact spacing and smaller text sizes
 - Single-column grid for main content
 - Stacked feature cards
 - Vertical button layout
 
 ### Phone - Landscape Mode
-*(Screenshot showing adapted layout on a phone in landscape)*
+
+_(Screenshot showing adapted layout on a phone in landscape)_
+
 - Adjusted aspect ratios for images
 - Multi-column grid (2 columns)
 - Horizontal feature card layout
 - Side-by-side buttons
 
 ### Tablet - Portrait Mode
-*(Screenshot showing expanded layout on a tablet in portrait)*
+
+_(Screenshot showing expanded layout on a tablet in portrait)_
+
 - Larger text and spacing
 - 3-column grid layout
 - Horizontal feature cards
 - Generous padding
 
 ### Tablet - Landscape Mode
-*(Screenshot showing full-width layout on a tablet in landscape)*
+
+_(Screenshot showing full-width layout on a tablet in landscape)_
+
 - Maximum columns in grid (4 columns)
 - Wide aspect ratio images
 - Optimal use of horizontal space
@@ -765,6 +822,7 @@ The app has been tested on multiple device configurations:
 ### Testing Orientations
 
 To test different orientations:
+
 1. Run the app on an emulator or physical device
 2. Rotate the device or use the emulator's rotation controls
 3. Observe how layouts smoothly transition between orientations
@@ -824,6 +882,7 @@ To test different orientations:
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Flutter SDK (latest stable version)
 - Dart SDK
 - Android Studio / VS Code with Flutter extensions
@@ -832,22 +891,26 @@ To test different orientations:
 ### Running the App
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd club_x
 ```
 
 2. Install dependencies:
+
 ```bash
 flutter pub get
 ```
 
 3. Run the app:
+
 ```bash
 flutter run
 ```
 
 4. To test on specific devices:
+
 ```bash
 # List available devices
 flutter devices
@@ -886,6 +949,7 @@ lib/
 ## 👥 Development Sprints
 
 ### Sprint #2 - Stateless & Stateful Widgets ✅ (Current)
+
 - ✅ Created comprehensive demo showing both widget types
 - ✅ Implemented 4+ StatelessWidget examples (headers, cards, greetings, icons)
 - ✅ Implemented 5+ StatefulWidget examples (counter, color changer, toggle, like button, text input)
@@ -895,6 +959,7 @@ lib/
 - ✅ Demonstrated setState() in multiple scenarios
 
 ### Sprint #2 - Widget Tree & Reactive UI Model ✅
+
 - ✅ Implemented comprehensive widget tree demonstration
 - ✅ Created interactive state management examples with setState()
 - ✅ Built multiple reactive UI components (counter, color picker, visibility toggle, slider)
@@ -903,6 +968,7 @@ lib/
 - ✅ Included educational dialog explaining reactive UI concepts
 
 ### Sprint #1 - Responsive UI Development ✅
+
 - ✅ Implemented responsive layouts using MediaQuery and LayoutBuilder
 - ✅ Created adaptive grid systems with dynamic column counts
 - ✅ Developed flexible widget hierarchies for various screen sizes
@@ -911,3 +977,5 @@ lib/
 ---
 
 **Built with ❤️ using Flutter**
+
+![alt text](image.png)
