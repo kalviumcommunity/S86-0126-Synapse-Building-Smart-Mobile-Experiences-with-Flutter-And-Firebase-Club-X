@@ -24,11 +24,12 @@ This project demonstrates fundamental Flutter concepts:
 
 This app uses **GoRouter** for modern declarative routing:
 
-| Route       | Path           | Screen                    |
-| ----------- | -------------- | ------------------------- |
-| Home        | `/`            | Stateless & Stateful Demo |
-| Responsive  | `/responsive`  | Responsive Layout Demo    |
-| Widget Tree | `/widget-tree` | Widget Tree Demo          |
+| Route            | Path                | Screen                    |
+| ---------------- | ------------------- | ------------------------- |
+| Home             | `/`                 | Stateless & Stateful Demo |
+| Responsive       | `/responsive`       | Responsive Layout Demo    |
+| Widget Tree      | `/widget-tree`      | Widget Tree Demo          |
+| Scrollable Views | `/scrollable-views` | ListView & GridView Demo  |
 
 Navigate using: `context.pushNamed('route-name')` or `context.go('/path')`
 
@@ -928,7 +929,8 @@ lib/
 └── screens/
     ├── stateless_stateful_demo.dart    # Stateless vs Stateful Widgets demo
     ├── widget_tree_demo.dart           # Widget Tree & Reactive UI demonstration
-    └── responsive_home.dart            # Responsive layout screen
+    ├── responsive_home.dart            # Responsive layout screen
+    └── scrollable_views.dart           # ListView & GridView demonstration
 ```
 
 ### Key Files
@@ -937,6 +939,7 @@ lib/
 - **`stateless_stateful_demo.dart`**: Complete demonstration of StatelessWidget and StatefulWidget with multiple interactive examples
 - **`widget_tree_demo.dart`**: Widget tree concepts and reactive UI with setState()
 - **`responsive_home.dart`**: Responsive layout logic for adaptive grid systems
+- **`scrollable_views.dart`**: ListView and GridView implementations with various layouts
 
 ## 🎓 Learning Resources
 
@@ -945,10 +948,12 @@ lib/
 - [StatelessWidget Class](https://api.flutter.dev/flutter/widgets/StatelessWidget-class.html)
 - [State Management](https://docs.flutter.dev/development/data-and-backend/state-mgmt)
 - [Flutter Layout Documentation](https://docs.flutter.dev/development/ui/layout)
+- [ListView Documentation](https://api.flutter.dev/flutter/widgets/ListView-class.html)
+- [GridView Documentation](https://api.flutter.dev/flutter/widgets/GridView-class.html)
 
 ## 👥 Development Sprints
 
-### Sprint #2 - Stateless & Stateful Widgets ✅ (Current)
+### Sprint #3 - Building Scrollable Views with ListView and GridView ✅ (Current)
 
 - ✅ Created comprehensive demo showing both widget types
 - ✅ Implemented 4+ StatelessWidget examples (headers, cards, greetings, icons)
@@ -958,7 +963,195 @@ lib/
 - ✅ Created comparison table and visual indicators
 - ✅ Demonstrated setState() in multiple scenarios
 
-### Sprint #2 - Widget Tree & Reactive UI Model ✅
+## 👥 Development Sprints
+
+### Sprint #3 - Building Scrollable Views with ListView and GridView ✅ (Current)
+
+#### 📖 Understanding ListView and GridView
+
+**ListView** is used for displaying scrollable lists of widgets arranged vertically or horizontally. It's perfect for:
+
+- Lists of items, messages, or notifications
+- Long feeds of content
+- Memory-efficient rendering with `ListView.builder()`
+
+**GridView** is used for displaying scrollable grid layouts, ideal for:
+
+- Image galleries and photo displays
+- Product catalogs and dashboards
+- Dashboard tiles and cards
+
+#### Implementation Overview
+
+**Horizontal ListView with Custom Styling:**
+
+```dart
+ListView.builder(
+  scrollDirection: Axis.horizontal,
+  itemCount: 8,
+  itemBuilder: (context, index) {
+    return Container(
+      width: 150,
+      margin: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.teal[100 * (index + 2)],
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Center(child: Text('Card ${index + 1}')),
+    );
+  },
+)
+```
+
+**Vertical ListView with ListTile:**
+
+```dart
+ListView.builder(
+  itemCount: 10,
+  itemBuilder: (context, index) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: Colors.deepPurple,
+        child: Text('${index + 1}'),
+      ),
+      title: Text('Item ${index + 1}'),
+      subtitle: Text('This is item number ${index + 1}'),
+      trailing: Icon(Icons.arrow_forward),
+    );
+  },
+)
+```
+
+**2-Column GridView:**
+
+```dart
+GridView.builder(
+  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+    crossAxisSpacing: 12,
+    mainAxisSpacing: 12,
+    childAspectRatio: 1.2,
+  ),
+  itemCount: 6,
+  itemBuilder: (context, index) {
+    final colors = [Colors.red, Colors.blue, Colors.green,
+                    Colors.orange, Colors.purple, Colors.pink];
+    return Container(
+      decoration: BoxDecoration(
+        color: colors[index],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Center(child: Text('Tile ${index + 1}')),
+    );
+  },
+)
+```
+
+**3-Column GridView:**
+
+```dart
+GridView.builder(
+  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 3,
+    crossAxisSpacing: 8,
+    mainAxisSpacing: 8,
+  ),
+  itemCount: 9,
+  itemBuilder: (context, index) {
+    return Container(
+      color: Colors.primaries[index % Colors.primaries.length],
+      child: Center(child: Text('${index + 1}')),
+    );
+  },
+)
+```
+
+#### Features Implemented
+
+- ✅ Horizontal ListView with custom styled cards (8 items)
+- ✅ Vertical ListView with ListTile elements (10 items)
+- ✅ GridView with 2-column layout (6 colored tiles)
+- ✅ GridView with 3-column layout (9 numbered tiles)
+- ✅ Custom styling with shadows and border radius
+- ✅ Responsive spacing and padding
+- ✅ SingleChildScrollView for nested scrollable content
+- ✅ Performance optimization with `NeverScrollableScrollPhysics()`
+
+#### Performance Optimization
+
+**Why use builder constructors?**
+
+- Only renders visible items on screen
+- Significantly reduces memory usage
+- Improves performance with large datasets
+- Ideal for dynamic, infinite scrolling lists
+
+**Best Practices Implemented:**
+
+- ✅ Used `ListView.builder()` and `GridView.builder()` for efficient rendering
+- ✅ Set `shrinkWrap: true` for nested scrollable views
+- ✅ Used `NeverScrollableScrollPhysics()` to disable internal scrolling in GridView
+- ✅ Avoided using default constructors with many children
+- ✅ Applied proper spacing and sizing for optimal performance
+
+#### 💡 Key Learnings
+
+**How do ListView and GridView improve UI efficiency?**
+
+- They only render visible widgets, reducing memory consumption by up to 95%
+- Built-in scrolling physics provides smooth, platform-specific scroll behavior
+- Can handle thousands of items without performance degradation
+- Automatic item recycling in builder mode ensures consistent memory usage
+
+**Why is using builder constructors recommended for large data sets?**
+
+- `ListView.builder()` and `GridView.builder()` use a callback that builds items on demand
+- Only visible items are kept in memory at any time
+- Scrolling through 1,000 items uses the same memory as scrolling through 10
+- Essential for infinite scrolling and pagination patterns
+- Enables lazy loading of data from APIs or databases
+
+**What are common performance pitfalls to avoid?**
+
+- ❌ Using `ListView()` constructor with large lists (materializes all items at once)
+- ❌ Not setting `shrinkWrap: true` when nesting inside SingleChildScrollView
+- ❌ Building expensive widgets in itemBuilder without proper optimization
+- ❌ Removing `physics: NeverScrollableScrollPhysics()` on nested scrollables
+- ❌ Using hot-reloading for performance testing (use `flutter run --release`)
+- ❌ Creating new Color or TextStyle objects in itemBuilder (move outside if possible)
+
+#### 🧪 Testing Scrollable Behavior
+
+The implementation has been tested for:
+
+1. ✅ Smooth scrolling performance with 25+ total items
+2. ✅ Proper spacing and alignment in both vertical and horizontal directions
+3. ✅ Layout adaptation to different screen sizes and orientations
+4. ✅ Memory efficiency with builder constructors (no noticeable lag)
+5. ✅ Consistent rendering across Android and iOS platforms
+6. ✅ Proper handling of nested scrollable views
+
+#### 📸 Visual Components
+
+The Scrollable Views demo includes:
+
+- **Horizontal ListView**: Colorful cards with gradient colors (teal shades)
+- **Vertical ListView**: Contact-style items with avatars and descriptions
+- **2-Column GridView**: Colorful tiles (red, blue, green, orange, purple, pink)
+- **3-Column GridView**: Numbered tiles with primary color scheme
+- **Header Sections**: Clear labeled sections with purple background
+- **Custom Styling**: Shadows, rounded corners, and proper spacing throughout
+
+---
+
+### Sprint #2 - Stateless & Stateful Widgets ✅
 
 - ✅ Implemented comprehensive widget tree demonstration
 - ✅ Created interactive state management examples with setState()
