@@ -1,12 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'screens/responsive_home.dart';
 import 'screens/stateless_stateful_demo.dart';
+import 'screens/widget_tree_demo.dart';
+
+// GoRouter configuration
+final GoRouter router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      name: 'home',
+      builder: (context, state) => const StatelessStatefulDemo(),
+    ),
+    GoRoute(
+      path: '/responsive',
+      name: 'responsive',
+      builder: (context, state) => const ResponsiveHome(),
+    ),
+    GoRoute(
+      path: '/widget-tree',
+      name: 'widget-tree',
+      builder: (context, state) => const WidgetTreeDemo(),
+    ),
+  ],
+);
 
 void main() {
   // Debug log to trace app initialization
   debugPrint('🚀 Club-X App Starting...');
   debugPrint('📱 Initializing Flutter Application');
-  
-  runApp(const StatelessStatefulDemo());
-  
+
+  runApp(const ClubXApp());
+
   debugPrint('✅ App Successfully Launched');
+}
+
+class ClubXApp extends StatelessWidget {
+  const ClubXApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      title: 'Club X',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      routerConfig: router,
+    );
+  }
 }
