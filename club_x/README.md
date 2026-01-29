@@ -1149,6 +1149,99 @@ The Scrollable Views demo includes:
 - **Header Sections**: Clear labeled sections with purple background
 - **Custom Styling**: Shadows, rounded corners, and proper spacing throughout
 
+---
+
+### Sprint #4 - Handling User Input with Forms ✅ (Current)
+
+#### 📌 Overview
+
+Implemented a dedicated **User Input Form** screen that collects name and email, validates user input, and provides instant feedback with a success SnackBar.
+
+**Route:** `/user-input-form`
+
+#### 🧩 Key Widgets Used
+
+- `TextFormField` for name and email input
+- `Form` with `GlobalKey<FormState>` for validation
+- `ElevatedButton` to submit the form
+- `SnackBar` for feedback upon successful submission
+
+#### ✅ Form Validation Logic
+
+```dart
+TextFormField(
+  controller: _nameController,
+  decoration: const InputDecoration(labelText: 'Name'),
+  validator: (value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your name';
+    }
+    if (value.trim().length < 2) {
+      return 'Name should be at least 2 characters';
+    }
+    return null;
+  },
+)
+```
+
+```dart
+TextFormField(
+  controller: _emailController,
+  decoration: const InputDecoration(labelText: 'Email'),
+  keyboardType: TextInputType.emailAddress,
+  validator: (value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your email';
+    }
+    if (!value.contains('@') || !value.contains('.')) {
+      return 'Enter a valid email address';
+    }
+    return null;
+  },
+)
+```
+
+#### 🧪 Submission Feedback
+
+```dart
+if (_formKey.currentState!.validate()) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Form submitted successfully!')),
+  );
+}
+```
+
+#### 📸 Screenshots
+
+Add screenshots for the following states:
+
+- **Before Input:** `screenshots/user_input_form/before.png`
+- **Validation Errors:** `screenshots/user_input_form/error.png`
+- **Success Submission:** `screenshots/user_input_form/success.png`
+
+Example embed (replace with your actual images):
+
+![Before Input](screenshots/user_input_form/before.png)
+![Validation Errors](screenshots/user_input_form/error.png)
+![Success Submission](screenshots/user_input_form/success.png)
+
+#### ✅ Reflection
+
+**Why is input validation important in mobile apps?**
+
+- It prevents bad data from being submitted and improves data quality.
+- It enhances user trust by providing clear, immediate feedback.
+
+**What’s the difference between TextField and TextFormField?**
+
+- `TextField` is a basic input widget.
+- `TextFormField` integrates with `Form` and supports built-in validation.
+
+**How does form state management simplify validation?**
+
+- A single `FormState` controls validation and reset for all fields.
+- It keeps input logic centralized and easier to maintain.
+
 #### 📸 Screenshots
 
 Below is a snapshot of the Scrollable Views screen showcasing the ListView and GridView sections:

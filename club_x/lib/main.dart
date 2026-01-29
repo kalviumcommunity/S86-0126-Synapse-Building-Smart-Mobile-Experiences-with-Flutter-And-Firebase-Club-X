@@ -4,6 +4,7 @@ import 'screens/responsive_home.dart';
 import 'screens/stateless_stateful_demo.dart';
 import 'screens/widget_tree_demo.dart';
 import 'screens/scrollable_views.dart';
+import 'screens/user_input_form.dart';
 
 final GoRouter router = GoRouter(
   routes: [
@@ -26,6 +27,11 @@ final GoRouter router = GoRouter(
       path: '/scrollable-views',
       name: 'scrollable-views',
       builder: (context, state) => const ScrollableViews(),
+    ),
+    GoRoute(
+      path: '/user-input-form',
+      name: 'user-input-form',
+      builder: (context, state) => const UserInputForm(),
     ),
   ],
 );
