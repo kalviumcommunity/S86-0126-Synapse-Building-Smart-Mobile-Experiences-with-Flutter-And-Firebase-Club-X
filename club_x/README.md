@@ -1149,6 +1149,30 @@ The Scrollable Views demo includes:
 - **Header Sections**: Clear labeled sections with purple background
 - **Custom Styling**: Shadows, rounded corners, and proper spacing throughout
 
+#### 📸 Screenshots
+
+Below is a snapshot of the Scrollable Views screen showcasing the ListView and GridView sections:
+
+![Scrollable Views Demo](image.png)
+
+#### ✅ Reflection
+
+**How does ListView differ from GridView in design use cases?**
+
+- `ListView` is best for linear content (feeds, messages, contacts) where items flow in one direction.
+- `GridView` is ideal for visual or structured content (galleries, catalogs, dashboards) arranged in rows and columns.
+
+**Why is `ListView.builder()` more efficient for large lists?**
+
+- It builds items lazily on demand, so only visible items are rendered.
+- This keeps memory usage low and improves scroll performance for long lists.
+
+**What can you do to prevent lag or overflow errors in scrollable views?**
+
+- Use builder constructors and avoid large static children lists.
+- Combine `shrinkWrap: true` with `NeverScrollableScrollPhysics()` for nested scrollables.
+- Keep item widgets lightweight and avoid heavy rebuilds inside `itemBuilder`.
+
 ---
 
 ### Sprint #2 - Stateless & Stateful Widgets ✅
@@ -1170,5 +1194,3 @@ The Scrollable Views demo includes:
 ---
 
 **Built with ❤️ using Flutter**
-
-![alt text](image.png)
