@@ -5,6 +5,7 @@ import 'screens/stateless_stateful_demo.dart';
 import 'screens/widget_tree_demo.dart';
 import 'screens/scrollable_views.dart';
 import 'screens/user_input_form.dart';
+import 'screens/state_management_demo.dart';
 
 final GoRouter router = GoRouter(
   routes: [
@@ -32,6 +33,11 @@ final GoRouter router = GoRouter(
       path: '/user-input-form',
       name: 'user-input-form',
       builder: (context, state) => const UserInputForm(),
+    ),
+    GoRoute(
+      path: '/state-management',
+      name: 'state-management',
+      builder: (context, state) => const StateManagementDemo(),
     ),
   ],
 );
