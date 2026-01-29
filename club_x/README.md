@@ -1242,6 +1242,65 @@ Example embed (replace with your actual images):
 - A single `FormState` controls validation and reset for all fields.
 - It keeps input logic centralized and easier to maintain.
 
+---
+
+### Sprint #5 - Local State Management with setState ✅ (Current)
+
+#### 📌 Overview
+
+Built a dedicated **State Management Demo** screen that uses `setState()` to update a counter, change UI styling when a threshold is reached, and reset state instantly.
+
+**Route:** `/state-management`
+
+#### ✅ setState() in Action
+
+```dart
+void _incrementCounter() {
+  setState(() {
+    _counter++;
+  });
+}
+```
+
+```dart
+AnimatedContainer(
+  duration: const Duration(milliseconds: 300),
+  color: _counter >= 5 ? Colors.greenAccent.shade100 : Colors.white,
+  child: Center(child: Text('$_counter times')),
+)
+```
+
+#### 📸 Screenshots
+
+Add screenshots for the following states:
+
+- **Initial State:** `screenshots/state_management/initial.png`
+- **After Increment:** `screenshots/state_management/after_increment.png`
+- **Goal Reached:** `screenshots/state_management/goal_reached.png`
+
+Example embed (replace with your actual images):
+
+![Initial State](screenshots/state_management/initial.png)
+![After Increment](screenshots/state_management/after_increment.png)
+![Goal Reached](screenshots/state_management/goal_reached.png)
+
+#### ✅ Reflection
+
+**What’s the difference between Stateless and Stateful widgets?**
+
+- Stateless widgets are immutable and don’t store internal state.
+- Stateful widgets store mutable state and rebuild when data changes.
+
+**Why is setState() important for Flutter’s reactive model?**
+
+- It notifies Flutter to rebuild only the widgets affected by state changes.
+- This keeps the UI in sync with user interactions efficiently.
+
+**How can improper use of setState() affect performance?**
+
+- Calling it too often or in large widget trees can cause unnecessary rebuilds.
+- Using it inside `build()` can create infinite rebuild loops.
+
 #### 📸 Screenshots
 
 Below is a snapshot of the Scrollable Views screen showcasing the ListView and GridView sections:
