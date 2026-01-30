@@ -6,6 +6,7 @@ import 'screens/widget_tree_demo.dart';
 import 'screens/scrollable_views.dart';
 import 'screens/user_input_form.dart';
 import 'screens/state_management_demo.dart';
+import 'screens/custom_widgets_demo.dart';
 
 final GoRouter router = GoRouter(
   routes: [
@@ -38,6 +39,11 @@ final GoRouter router = GoRouter(
       path: '/state-management',
       name: 'state-management',
       builder: (context, state) => const StateManagementDemo(),
+    ),
+    GoRoute(
+      path: '/custom-widgets',
+      name: 'custom-widgets',
+      builder: (context, state) => const CustomWidgetsDemo(),
     ),
   ],
 );

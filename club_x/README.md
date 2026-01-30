@@ -30,6 +30,7 @@ This app uses **GoRouter** for modern declarative routing:
 | Responsive       | `/responsive`       | Responsive Layout Demo    |
 | Widget Tree      | `/widget-tree`      | Widget Tree Demo          |
 | Scrollable Views | `/scrollable-views` | ListView & GridView Demo  |
+| Custom Widgets   | `/custom-widgets`   | Reusable Custom Widgets   |
 
 Navigate using: `context.pushNamed('route-name')` or `context.go('/path')`
 
@@ -1326,6 +1327,144 @@ Below is a snapshot of the Scrollable Views screen showcasing the ListView and G
 - Keep item widgets lightweight and avoid heavy rebuilds inside `itemBuilder`.
 
 ---
+
+## 🧩 Sprint #3: Creating Reusable Custom Widgets for Modular UI Design
+
+### 📖 Overview
+
+Custom widgets are the cornerstone of scalable Flutter development. By creating reusable components, we reduce code duplication, improve maintainability, and ensure design consistency across the app.
+
+### 🎯 Custom Widgets Implemented
+
+#### 1. CustomButton (Stateless)
+
+A reusable button component with customizable styling:
+
+```dart
+class CustomButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onPressed;
+  final Color backgroundColor;
+  final Color textColor;
+  final double borderRadius;
+  
+  // Used in multiple screens with different colors and actions
+}
+```
+
+**Features:**
+- Customizable background and text colors
+- Configurable border radius
+- Consistent padding and text styling
+- Reused across multiple screens
+
+#### 2. InfoCard (Stateless)
+
+A card component for displaying information with icons:
+
+```dart
+class InfoCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color iconColor;
+  
+  // Creates consistent info displays throughout the app
+}
+```
+
+**Features:**
+- Icon-title-subtitle layout
+- Customizable icon color
+- Consistent elevation and border radius
+- Perfect for settings, profiles, and list items
+
+#### 3. LikeButton (Stateful)
+
+An interactive like button with state management:
+
+```dart
+class LikeButton extends StatefulWidget {
+  final VoidCallback? onLike;
+  
+  // Maintains liked/unliked state internally
+}
+```
+
+**Features:**
+- Toggles between liked and unliked states
+- Visual feedback with color change
+- Optional callback for additional actions
+- Self-contained state management
+
+### 📱 Usage Examples
+
+**Multiple buttons with different styles:**
+```dart
+CustomButton(
+  label: 'Primary Action',
+  backgroundColor: Colors.teal,
+  onPressed: () => print('Tapped!'),
+),
+CustomButton(
+  label: 'Secondary',
+  backgroundColor: Colors.orange,
+  onPressed: () => print('Tapped!'),
+),
+```
+
+**Info cards for different purposes:**
+```dart
+InfoCard(
+  title: 'Profile',
+  subtitle: 'View account details',
+  icon: Icons.person,
+  iconColor: Colors.blue,
+),
+InfoCard(
+  title: 'Settings',
+  subtitle: 'Customize preferences',
+  icon: Icons.settings,
+  iconColor: Colors.purple,
+),
+```
+
+### ✅ Benefits of Custom Widgets
+
+**Code Reusability:** Write once, use everywhere - reduces duplication and speeds up development.
+
+**Consistency:** Ensures uniform design across the app - buttons look the same, cards have identical styling.
+
+**Maintainability:** Update in one place, changes reflect everywhere - easy to modify and improve.
+
+**Modularity:** Break complex UIs into small, manageable pieces - easier to test and debug.
+
+### 💡 Reflection
+
+**How do reusable widgets improve development efficiency?**
+- They eliminate code duplication and reduce time spent on repetitive UI implementation.
+- Teams can build faster by using pre-built components.
+- Updates and bug fixes propagate automatically to all usages.
+
+**What challenges did you face while designing modular components?**
+- Balancing flexibility with simplicity - too many parameters make widgets complex.
+- Deciding what should be customizable vs. what should be fixed.
+- Ensuring widgets work well in different contexts and screen sizes.
+
+**How could your team apply this approach to your full project?**
+- Create a component library at the start of the project.
+- Document each widget's purpose and customization options.
+- Review and refactor common UI patterns into reusable widgets regularly.
+
+---
+
+### Sprint #3 - Reusable Custom Widgets ✅
+
+- ✅ Created modular custom widgets (CustomButton, InfoCard, LikeButton)
+- ✅ Implemented both stateless and stateful custom components
+- ✅ Demonstrated widget reusability across multiple contexts
+- ✅ Added customization options for flexibility
+- ✅ Built dedicated demo screen showcasing all custom widgets
 
 ### Sprint #2 - Stateless & Stateful Widgets ✅
 
