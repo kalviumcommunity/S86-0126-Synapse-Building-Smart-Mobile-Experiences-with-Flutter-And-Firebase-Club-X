@@ -942,6 +942,78 @@ lib/
 - **`responsive_home.dart`**: Responsive layout logic for adaptive grid systems
 - **`scrollable_views.dart`**: ListView and GridView implementations with various layouts
 
+## 🔌 Firebase Integration ✅
+
+This project is pre-configured to connect to Firebase for Android, iOS, Web, and desktop via the FlutterFire CLI. Follow these steps to review or re-run the setup.
+
+1. What is Firebase?
+
+- Firebase is a Google cloud platform that provides services like Authentication, Firestore, Cloud Storage, Cloud Functions, Hosting, and Analytics for mobile & web apps.
+
+2. Files created by FlutterFire
+
+- `lib/firebase_options.dart` — Generated platform-specific `FirebaseOptions` used to initialize Firebase.
+- `android/app/google-services.json` — Android config file (placed at `android/app/`).
+- `ios/Runner/GoogleService-Info.plist` — iOS config file (add if supporting iOS).
+
+3. How to initialize Firebase in this app
+
+- Ensure dependency in `pubspec.yaml`:
+
+```yaml
+dependencies:
+  firebase_core: ^3.0.0
+```
+
+- Initialize in `lib/main.dart` (already implemented):
+
+```dart
+WidgetsFlutterBinding.ensureInitialized();
+await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
+```
+
+4. Verify Firebase Connection
+
+- Run the app on an emulator or device:
+
+```bash
+flutter pub get
+flutter run
+```
+
+- Open Firebase Console → Project Settings → Your Apps and confirm your app is listed and active.
+- You can also watch logs in the console for the debug message `Firebase initialized` after startup.
+
+5. Common issues & fixes
+
+- google-services.json not found → Move it to `android/app/`.
+- Plugin not found → Update Gradle & the Google Services plugin in `android/settings.gradle.kts`.
+- Firebase not initialized → Ensure `await Firebase.initializeApp()` is called before `runApp()`.
+- Wrong package name → Confirm `applicationId` / `package_name` matches the Firebase app.
+
+6. README Submission / PR Guidelines
+
+- Commit message:
+
+```
+feat: connected Flutter app with Firebase project
+```
+
+- PR title:
+
+```
+[Sprint-2] Firebase Integration Setup – TeamName
+```
+
+- PR description should include:
+  - Short summary of setup steps and files added/modified
+  - Screenshot(s) showing the app in Firebase Console (Project Settings → Your Apps)
+  - Short reflection: what was important, errors encountered and fixes, how this prepares the app for Authentication/Storage
+
+---
+
 ## 🎓 Learning Resources
 
 - [Flutter Widget Catalog](https://docs.flutter.dev/development/ui/widgets)
