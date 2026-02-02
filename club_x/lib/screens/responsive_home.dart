@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/info_card.dart';
 
 /// A responsive home screen that adapts to different screen sizes and orientations
 /// Demonstrates the use of MediaQuery, LayoutBuilder, and flexible widgets
@@ -414,36 +416,26 @@ class ResponsiveHome extends StatelessWidget {
             ),
             SizedBox(height: isTablet ? 24 : 20),
             
-            // Responsive button layout
+            // Responsive button layout using CustomButton
             isTablet
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Flexible(
-                        child: ElevatedButton.icon(
+                        child: CustomButton(
+                          label: 'Sign In',
+                          backgroundColor: Colors.white,
+                          textColor: Colors.deepPurple,
                           onPressed: () {},
-                          icon: const Icon(Icons.login),
-                          label: const Text('Sign In'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.deepPurple,
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
                         ),
                       ),
                       const SizedBox(width: 16),
                       Flexible(
-                        child: OutlinedButton.icon(
+                        child: CustomButton(
+                          label: 'Register',
+                          backgroundColor: Colors.transparent,
+                          textColor: Colors.white,
                           onPressed: () {},
-                          icon: const Icon(Icons.person_add),
-                          label: const Text('Register'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            side: const BorderSide(color: Colors.white, width: 2),
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
                         ),
                       ),
                     ],
@@ -451,28 +443,18 @@ class ResponsiveHome extends StatelessWidget {
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      ElevatedButton.icon(
+                      CustomButton(
+                        label: 'Sign In',
+                        backgroundColor: Colors.white,
+                        textColor: Colors.deepPurple,
                         onPressed: () {},
-                        icon: const Icon(Icons.login),
-                        label: const Text('Sign In'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.deepPurple,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
                       ),
                       const SizedBox(height: 12),
-                      OutlinedButton.icon(
+                      CustomButton(
+                        label: 'Register',
+                        backgroundColor: Colors.transparent,
+                        textColor: Colors.white,
                         onPressed: () {},
-                        icon: const Icon(Icons.person_add),
-                        label: const Text('Register'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          side: const BorderSide(color: Colors.white, width: 2),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
                       ),
                     ],
                   ),
