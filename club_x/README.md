@@ -1347,12 +1347,13 @@ class CustomButton extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
   final double borderRadius;
-  
+
   // Used in multiple screens with different colors and actions
 }
 ```
 
 **Features:**
+
 - Customizable background and text colors
 - Configurable border radius
 - Consistent padding and text styling
@@ -1368,12 +1369,13 @@ class InfoCard extends StatelessWidget {
   final String subtitle;
   final IconData icon;
   final Color iconColor;
-  
+
   // Creates consistent info displays throughout the app
 }
 ```
 
 **Features:**
+
 - Icon-title-subtitle layout
 - Customizable icon color
 - Consistent elevation and border radius
@@ -1386,12 +1388,13 @@ An interactive like button with state management:
 ```dart
 class LikeButton extends StatefulWidget {
   final VoidCallback? onLike;
-  
+
   // Maintains liked/unliked state internally
 }
 ```
 
 **Features:**
+
 - Toggles between liked and unliked states
 - Visual feedback with color change
 - Optional callback for additional actions
@@ -1400,6 +1403,7 @@ class LikeButton extends StatefulWidget {
 ### 📱 Usage Examples
 
 **Multiple buttons with different styles:**
+
 ```dart
 CustomButton(
   label: 'Primary Action',
@@ -1414,6 +1418,7 @@ CustomButton(
 ```
 
 **Info cards for different purposes:**
+
 ```dart
 InfoCard(
   title: 'Profile',
@@ -1442,16 +1447,19 @@ InfoCard(
 ### 💡 Reflection
 
 **How do reusable widgets improve development efficiency?**
+
 - They eliminate code duplication and reduce time spent on repetitive UI implementation.
 - Teams can build faster by using pre-built components.
 - Updates and bug fixes propagate automatically to all usages.
 
 **What challenges did you face while designing modular components?**
+
 - Balancing flexibility with simplicity - too many parameters make widgets complex.
 - Deciding what should be customizable vs. what should be fixed.
 - Ensuring widgets work well in different contexts and screen sizes.
 
 **How could your team apply this approach to your full project?**
+
 - Create a component library at the start of the project.
 - Document each widget's purpose and customization options.
 - Review and refactor common UI patterns into reusable widgets regularly.
@@ -1481,6 +1489,70 @@ InfoCard(
 - ✅ Created adaptive grid systems with dynamic column counts
 - ✅ Developed flexible widget hierarchies for various screen sizes
 - ✅ Tested across multiple device types and orientations
+
+---
+
+## 🎬 Animations & Transitions (New)
+
+We added an **Animations** demo that demonstrates implicit & explicit animations and a custom page transition. See the `Animations Demo` screen in the app to try these hands-on examples.
+
+### What was implemented
+
+- **Implicit Animation:** `AnimatedOpacity` for fade in/out of a `FlutterLogo`.
+- **Explicit Animation:** `AnimationController` + `RotationTransition` for a continuous rotation demo.
+- **Page Transition:** `PageRouteBuilder` with a combined slide + fade transitions.
+
+### Example snippets
+
+AnimatedOpacity
+
+```dart
+AnimatedOpacity(
+  opacity: visible ? 1.0 : 0.15,
+  duration: Duration(milliseconds: 500),
+  curve: Curves.easeInOut,
+  child: FlutterLogo(size: 120),
+);
+```
+
+Rotation using AnimationController
+
+```dart
+_controller = AnimationController(
+  duration: Duration(seconds: 2),
+  vsync: this,
+)..repeat(reverse: true);
+
+RotationTransition(
+  turns: _controller,
+  child: FlutterLogo(size: 100),
+);
+```
+
+PageRouteBuilder (slide + fade)
+
+```dart
+Navigator.of(context).push(PageRouteBuilder(
+  transitionDuration: Duration(milliseconds: 600),
+  pageBuilder: (_, animation, __) => DetailsPage(),
+  transitionsBuilder: (_, animation, __, child) {
+    final offset = Tween<Offset>(begin: Offset(1, 0), end: Offset.zero)
+        .animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut));
+    final opacity = Tween<double>(begin: 0, end: 1).animate(animation);
+    return SlideTransition(position: offset, child: FadeTransition(opacity: opacity, child: child));
+  },
+));
+```
+
+### README Guidelines for this task
+
+- Add screenshots or a short GIF to `screenshots/animations/` showing:
+  - The fade-in/out AnimatedOpacity state
+  - The rotating logo from the explicit animation
+  - The page transition in action
+- Add a short reflection on why animations improve UX (subtlety, guidance, clarity).
+- Commit message suggestion: `feat: added animations and transitions for improved UX`
+- PR title suggestion: `[Sprint-2] Flutter Animations & Transitions – TeamName`
 
 ---
 

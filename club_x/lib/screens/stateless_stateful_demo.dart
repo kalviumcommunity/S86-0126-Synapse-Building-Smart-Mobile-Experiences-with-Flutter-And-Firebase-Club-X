@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'animations_demo.dart';
 
 /// Main demo screen combining both Stateless and Stateful widgets
 /// This is a StatefulWidget because it manages the overall app state (theme mode)
@@ -48,27 +49,28 @@ class _StatelessStatefulDemoState extends State<StatelessStatefulDemo> {
                 icon: Icons.lock,
                 color: Colors.blue,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Examples of Stateless Widgets
               const StaticInfoCard(
                 title: 'What is a StatelessWidget?',
-                description: 'A widget that does not store any mutable state. '
+                description:
+                    'A widget that does not store any mutable state. '
                     'Once built, it remains unchanged until rebuilt by its parent. '
                     'Perfect for static content like labels, icons, and text.',
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               const GreetingWidget(name: 'Flutter Developer'),
-              
+
               const SizedBox(height: 12),
-              
+
               const StaticFeatureRow(),
-              
+
               const SizedBox(height: 32),
-              
+
               // STATEFUL WIDGET SECTION
               const StaticHeader(
                 title: 'Stateful Widgets',
@@ -76,41 +78,44 @@ class _StatelessStatefulDemoState extends State<StatelessStatefulDemo> {
                 icon: Icons.refresh,
                 color: Colors.green,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               const StaticInfoCard(
                 title: 'What is a StatefulWidget?',
-                description: 'A widget that maintains internal state that can change '
+                description:
+                    'A widget that maintains internal state that can change '
                     'during the app\'s lifecycle. It updates dynamically in response '
                     'to user actions, animations, or data changes.',
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Examples of Stateful Widgets
               const InteractiveCounter(),
-              
+
               const SizedBox(height: 16),
-              
+
               const ColorChangerWidget(),
-              
+
               const SizedBox(height: 16),
-              
+
               const ToggleSwitchWidget(),
-              
+
               const SizedBox(height: 16),
-              
+
               const LikeButtonWidget(),
-              
+
               const SizedBox(height: 16),
-              
+
               const TextInputWidget(),
-              
+
               const SizedBox(height: 32),
-              
+
               // Comparison Section (Stateless)
               const ComparisonCard(),
+              const SizedBox(height: 16),
+              const AnimationsLinkCard(),
             ],
           ),
         ),
@@ -167,10 +172,7 @@ class StaticHeader extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -204,18 +206,12 @@ class StaticInfoCard extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
               description,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[700],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
             ),
           ],
         ),
@@ -293,11 +289,7 @@ class FeatureIcon extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const FeatureIcon({
-    super.key,
-    required this.icon,
-    required this.label,
-  });
+  const FeatureIcon({super.key, required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -307,10 +299,7 @@ class FeatureIcon extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -372,10 +361,7 @@ class _InteractiveCounterState extends State<InteractiveCounter> {
               children: [
                 const Text(
                   'Interactive Counter',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -472,7 +458,7 @@ class _ColorChangerWidgetState extends State<ColorChangerWidget> {
     Colors.purple,
     Colors.teal,
   ];
-  
+
   final List<String> _colorNames = [
     'Red',
     'Blue',
@@ -502,10 +488,7 @@ class _ColorChangerWidgetState extends State<ColorChangerWidget> {
               children: [
                 const Text(
                   'Color Changer',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -600,10 +583,7 @@ class _ToggleSwitchWidgetState extends State<ToggleSwitchWidget> {
                 children: [
                   const Text(
                     'Toggle Feature',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -628,10 +608,7 @@ class _ToggleSwitchWidgetState extends State<ToggleSwitchWidget> {
               activeTrackColor: Colors.green,
             ),
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 4,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(8),
@@ -686,18 +663,12 @@ class _LikeButtonWidgetState extends State<LikeButtonWidget> {
                 children: [
                   const Text(
                     'Like Button Example',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '$_likeCount people liked this',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -711,10 +682,7 @@ class _LikeButtonWidgetState extends State<LikeButtonWidget> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 4,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(8),
@@ -769,10 +737,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
               children: [
                 const Text(
                   'Real-time Text Input',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -881,10 +846,7 @@ class ComparisonCard extends StatelessWidget {
                 SizedBox(width: 12),
                 Text(
                   'Quick Comparison',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -945,10 +907,7 @@ class ComparisonCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(color: Colors.blue, width: 1),
                   ),
-                  child: Text(
-                    stateless,
-                    style: const TextStyle(fontSize: 12),
-                  ),
+                  child: Text(stateless, style: const TextStyle(fontSize: 12)),
                 ),
               ),
               const SizedBox(width: 8),
@@ -960,15 +919,52 @@ class ComparisonCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(color: Colors.green, width: 1),
                   ),
-                  child: Text(
-                    stateful,
-                    style: const TextStyle(fontSize: 12),
-                  ),
+                  child: Text(stateful, style: const TextStyle(fontSize: 12)),
                 ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Link Card to open the Animations demo
+class AnimationsLinkCard extends StatelessWidget {
+  const AnimationsLinkCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Animations & Transitions',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Try implicit and explicit animations, and custom page transitions in the dedicated demo screen.',
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const AnimationsDemo(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.animation),
+              label: const Text('Open Animations Demo'),
+            ),
+          ],
+        ),
       ),
     );
   }
