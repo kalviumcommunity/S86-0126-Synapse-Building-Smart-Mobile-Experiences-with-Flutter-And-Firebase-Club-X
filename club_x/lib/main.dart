@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'screens/responsive_home.dart';
 import 'screens/stateless_stateful_demo.dart';
 import 'screens/widget_tree_demo.dart';
@@ -60,14 +62,19 @@ final GoRouter router = GoRouter(
   ],
 );
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase with platform-specific options
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   // Debug log to trace app initialization
   debugPrint('🚀 Club-X App Starting...');
-  debugPrint('📱 Initializing Flutter Application');
+  debugPrint('📱 Firebase initialized and Flutter Application starting');
 
   runApp(const ClubXApp());
 
-  debugPrint('✅ App Successfully Launched');
+  debugPrint('✅ App Successfully Launched — Firebase initialized');
 }
 
 class ClubXApp extends StatelessWidget {
