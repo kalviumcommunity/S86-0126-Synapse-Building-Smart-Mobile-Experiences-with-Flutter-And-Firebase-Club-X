@@ -8,6 +8,7 @@ import 'screens/user_input_form.dart';
 import 'screens/state_management_demo.dart';
 import 'screens/custom_widgets_demo.dart';
 import 'screens/assets_demo_screen.dart';
+import 'screens/animations_demo.dart';
 
 final GoRouter router = GoRouter(
   routes: [
@@ -50,6 +51,11 @@ final GoRouter router = GoRouter(
       path: '/assets-demo',
       name: 'assets-demo',
       builder: (context, state) => const AssetsDemoScreen(),
+    ),
+    GoRoute(
+      path: '/animations',
+      name: 'animations',
+      builder: (context, state) => const AnimationsDemo(),
     ),
   ],
 );
