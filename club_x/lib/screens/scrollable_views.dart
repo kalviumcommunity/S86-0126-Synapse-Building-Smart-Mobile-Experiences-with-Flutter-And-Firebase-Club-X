@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ScrollableViews extends StatelessWidget {
-  const ScrollableViews({Key? key}) : super(key: key);
+  const ScrollableViews({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class ScrollableViews extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: const Color.fromRGBO(0, 0, 0, 0.1),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -148,7 +148,18 @@ class ScrollableViews extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: colors[index].withOpacity(0.3),
+                          color: Color.fromRGBO(
+                            ((colors[index].r * 255.0).round())
+                                .clamp(0, 255)
+                                .toInt(),
+                            ((colors[index].g * 255.0).round())
+                                .clamp(0, 255)
+                                .toInt(),
+                            ((colors[index].b * 255.0).round())
+                                .clamp(0, 255)
+                                .toInt(),
+                            0.3,
+                          ),
                           blurRadius: 6,
                           offset: const Offset(0, 2),
                         ),
@@ -204,7 +215,18 @@ class ScrollableViews extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: colors[index % colors.length].withOpacity(0.3),
+                          color: Color.fromRGBO(
+                            ((colors[index % colors.length].r * 255.0).round())
+                                .clamp(0, 255)
+                                .toInt(),
+                            ((colors[index % colors.length].g * 255.0).round())
+                                .clamp(0, 255)
+                                .toInt(),
+                            ((colors[index % colors.length].b * 255.0).round())
+                                .clamp(0, 255)
+                                .toInt(),
+                            0.3,
+                          ),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),

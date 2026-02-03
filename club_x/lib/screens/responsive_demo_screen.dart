@@ -9,8 +9,6 @@ class ResponsiveDemoScreen extends StatelessWidget {
     // MediaQuery usage examples
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
-    var pixelRatio = MediaQuery.of(context).devicePixelRatio;
-    var textScaleFactor = MediaQuery.of(context).textScaleFactor;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Responsive Design Demo')),

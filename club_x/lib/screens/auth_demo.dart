@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthDemo extends StatefulWidget {
-  const AuthDemo({Key? key}) : super(key: key);
+  const AuthDemo({super.key});
 
   @override
   State<AuthDemo> createState() => _AuthDemoState();
@@ -21,11 +21,13 @@ class _AuthDemoState extends State<AuthDemo> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+      if (!mounted) return;
       setState(() {});
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Signed up successfully')));
     } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Sign up failed: ${e.message}')));
@@ -38,11 +40,13 @@ class _AuthDemoState extends State<AuthDemo> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+      if (!mounted) return;
       setState(() {});
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Signed in successfully')));
     } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Sign in failed: ${e.message}')));
@@ -51,6 +55,7 @@ class _AuthDemoState extends State<AuthDemo> {
 
   Future<void> _signOut() async {
     await _auth.signOut();
+    if (!mounted) return;
     setState(() {});
     ScaffoldMessenger.of(
       context,

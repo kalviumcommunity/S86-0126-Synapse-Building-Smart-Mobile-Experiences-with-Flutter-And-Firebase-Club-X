@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AnimationsDemo extends StatefulWidget {
-  const AnimationsDemo({Key? key}) : super(key: key);
+  const AnimationsDemo({super.key});
 
   @override
   State<AnimationsDemo> createState() => _AnimationsDemoState();
@@ -181,7 +181,7 @@ class _AnimationsDemoState extends State<AnimationsDemo>
 }
 
 class DetailsPage extends StatelessWidget {
-  const DetailsPage({Key? key}) : super(key: key);
+  const DetailsPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -4,7 +4,7 @@ import '../widgets/info_card.dart';
 import '../widgets/like_button.dart';
 
 class CustomWidgetsDemo extends StatelessWidget {
-  const CustomWidgetsDemo();
+  const CustomWidgetsDemo({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -76,23 +76,23 @@ class CustomWidgetsDemo extends StatelessWidget {
               children: [
                 LikeButton(
                   onLike: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Liked!')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(const SnackBar(content: Text('Liked!')));
                   },
                 ),
                 LikeButton(
                   onLike: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Liked!')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(const SnackBar(content: Text('Liked!')));
                   },
                 ),
                 LikeButton(
                   onLike: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Liked!')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(const SnackBar(content: Text('Liked!')));
                   },
                 ),
               ],

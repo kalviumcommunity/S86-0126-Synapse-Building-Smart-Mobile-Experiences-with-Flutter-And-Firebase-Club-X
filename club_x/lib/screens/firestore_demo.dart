@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreDemo extends StatefulWidget {
-  const FirestoreDemo({Key? key}) : super(key: key);
+  const FirestoreDemo({super.key});
 
   @override
   State<FirestoreDemo> createState() => _FirestoreDemoState();
@@ -59,13 +59,16 @@ class _FirestoreDemoState extends State<FirestoreDemo> {
                   .orderBy('createdAt', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.hasError)
+                if (snapshot.hasError) {
                   return const Center(child: Text('Error loading messages'));
-                if (snapshot.connectionState == ConnectionState.waiting)
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
+                }
                 final docs = snapshot.data!.docs;
-                if (docs.isEmpty)
+                if (docs.isEmpty) {
                   return const Center(child: Text('No messages yet'));
+                }
                 return ListView.builder(
                   itemCount: docs.length,
                   itemBuilder: (context, index) {

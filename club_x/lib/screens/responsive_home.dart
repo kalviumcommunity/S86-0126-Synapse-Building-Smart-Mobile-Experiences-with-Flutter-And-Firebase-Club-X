@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_button.dart';
-import '../widgets/info_card.dart';
 
 /// A responsive home screen that adapts to different screen sizes and orientations
 /// Demonstrates the use of MediaQuery, LayoutBuilder, and flexible widgets
@@ -14,14 +13,14 @@ class ResponsiveHome extends StatelessWidget {
     final screenWidth = screenSize.width;
     final screenHeight = screenSize.height;
     final orientation = MediaQuery.of(context).orientation;
-    
+
     // Determine if the device is a tablet based on width
     final bool isTablet = screenWidth > 600;
     final bool isLandscape = orientation == Orientation.landscape;
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      
+
       // Header Section - AppBar with responsive title size
       appBar: AppBar(
         elevation: 0,
@@ -42,7 +41,7 @@ class ResponsiveHome extends StatelessWidget {
           SizedBox(width: isTablet ? 16 : 8),
         ],
       ),
-      
+
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(isTablet ? 24.0 : 16.0),
@@ -57,24 +56,24 @@ class ResponsiveHome extends StatelessWidget {
                 isTablet: isTablet,
                 isLandscape: isLandscape,
               ),
-              
+
               SizedBox(height: isTablet ? 24 : 16),
-              
+
               // Main Content Area - Adaptive Grid
               _buildAdaptiveGrid(context, isTablet, isLandscape),
-              
+
               SizedBox(height: isTablet ? 24 : 16),
-              
+
               // Feature Cards Section
               _buildFeatureCardsSection(context, isTablet, isLandscape),
-              
+
               SizedBox(height: isTablet ? 24 : 16),
-              
+
               // Responsive Image Section
               _buildResponsiveImageSection(context, isTablet),
-              
+
               SizedBox(height: isTablet ? 24 : 16),
-              
+
               // Footer/Action Section
               _buildFooterSection(context, isTablet),
             ],
@@ -109,10 +108,26 @@ class ResponsiveHome extends StatelessWidget {
               ),
             ),
             SizedBox(height: isTablet ? 16 : 12),
-            _buildInfoRow('Screen Width', '${screenWidth.toStringAsFixed(1)} px', isTablet),
-            _buildInfoRow('Screen Height', '${screenHeight.toStringAsFixed(1)} px', isTablet),
-            _buildInfoRow('Device Type', isTablet ? 'Tablet' : 'Phone', isTablet),
-            _buildInfoRow('Orientation', isLandscape ? 'Landscape' : 'Portrait', isTablet),
+            _buildInfoRow(
+              'Screen Width',
+              '${screenWidth.toStringAsFixed(1)} px',
+              isTablet,
+            ),
+            _buildInfoRow(
+              'Screen Height',
+              '${screenHeight.toStringAsFixed(1)} px',
+              isTablet,
+            ),
+            _buildInfoRow(
+              'Device Type',
+              isTablet ? 'Tablet' : 'Phone',
+              isTablet,
+            ),
+            _buildInfoRow(
+              'Orientation',
+              isLandscape ? 'Landscape' : 'Portrait',
+              isTablet,
+            ),
           ],
         ),
       ),
@@ -147,7 +162,11 @@ class ResponsiveHome extends StatelessWidget {
   }
 
   /// Builds an adaptive grid using LayoutBuilder
-  Widget _buildAdaptiveGrid(BuildContext context, bool isTablet, bool isLandscape) {
+  Widget _buildAdaptiveGrid(
+    BuildContext context,
+    bool isTablet,
+    bool isLandscape,
+  ) {
     return LayoutBuilder(
       builder: (context, constraints) {
         // Determine number of columns based on available width
@@ -246,7 +265,11 @@ class ResponsiveHome extends StatelessWidget {
   }
 
   /// Builds feature cards section with flexible layout
-  Widget _buildFeatureCardsSection(BuildContext context, bool isTablet, bool isLandscape) {
+  Widget _buildFeatureCardsSection(
+    BuildContext context,
+    bool isTablet,
+    bool isLandscape,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -259,25 +282,61 @@ class ResponsiveHome extends StatelessWidget {
           ),
         ),
         SizedBox(height: isTablet ? 16 : 12),
-        
+
         // Use Wrap for responsive card layout
         isTablet || isLandscape
             ? Row(
                 children: [
-                  Expanded(child: _buildFeatureCard('Upcoming Events', Icons.calendar_today, Colors.blue, isTablet)),
+                  Expanded(
+                    child: _buildFeatureCard(
+                      'Upcoming Events',
+                      Icons.calendar_today,
+                      Colors.blue,
+                      isTablet,
+                    ),
+                  ),
                   SizedBox(width: isTablet ? 16 : 12),
-                  Expanded(child: _buildFeatureCard('New Members', Icons.person_add, Colors.green, isTablet)),
+                  Expanded(
+                    child: _buildFeatureCard(
+                      'New Members',
+                      Icons.person_add,
+                      Colors.green,
+                      isTablet,
+                    ),
+                  ),
                   SizedBox(width: isTablet ? 16 : 12),
-                  Expanded(child: _buildFeatureCard('Announcements', Icons.campaign, Colors.orange, isTablet)),
+                  Expanded(
+                    child: _buildFeatureCard(
+                      'Announcements',
+                      Icons.campaign,
+                      Colors.orange,
+                      isTablet,
+                    ),
+                  ),
                 ],
               )
             : Column(
                 children: [
-                  _buildFeatureCard('Upcoming Events', Icons.calendar_today, Colors.blue, isTablet),
+                  _buildFeatureCard(
+                    'Upcoming Events',
+                    Icons.calendar_today,
+                    Colors.blue,
+                    isTablet,
+                  ),
                   SizedBox(height: isTablet ? 16 : 12),
-                  _buildFeatureCard('New Members', Icons.person_add, Colors.green, isTablet),
+                  _buildFeatureCard(
+                    'New Members',
+                    Icons.person_add,
+                    Colors.green,
+                    isTablet,
+                  ),
                   SizedBox(height: isTablet ? 16 : 12),
-                  _buildFeatureCard('Announcements', Icons.campaign, Colors.orange, isTablet),
+                  _buildFeatureCard(
+                    'Announcements',
+                    Icons.campaign,
+                    Colors.orange,
+                    isTablet,
+                  ),
                 ],
               ),
       ],
@@ -285,7 +344,12 @@ class ResponsiveHome extends StatelessWidget {
   }
 
   /// Builds individual feature card
-  Widget _buildFeatureCard(String title, IconData icon, Color color, bool isTablet) {
+  Widget _buildFeatureCard(
+    String title,
+    IconData icon,
+    Color color,
+    bool isTablet,
+  ) {
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -313,10 +377,7 @@ class ResponsiveHome extends StatelessWidget {
             SizedBox(height: isTablet ? 8 : 4),
             Text(
               'View Details',
-              style: TextStyle(
-                fontSize: isTablet ? 14 : 12,
-                color: color,
-              ),
+              style: TextStyle(fontSize: isTablet ? 14 : 12, color: color),
             ),
           ],
         ),
@@ -337,14 +398,13 @@ class ResponsiveHome extends StatelessWidget {
             aspectRatio: isTablet ? 2.5 : 16 / 9,
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(12),
+                ),
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Colors.deepPurple,
-                    Colors.deepPurple.shade300,
-                  ],
+                  colors: [Colors.deepPurple, Colors.deepPurple.shade300],
                 ),
               ),
               child: Center(
@@ -415,7 +475,7 @@ class ResponsiveHome extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: isTablet ? 24 : 20),
-            
+
             // Responsive button layout using CustomButton
             isTablet
                 ? Row(

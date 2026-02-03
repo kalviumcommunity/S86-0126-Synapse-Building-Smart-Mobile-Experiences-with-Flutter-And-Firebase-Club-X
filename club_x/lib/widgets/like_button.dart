@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class LikeButton extends StatefulWidget {
   final VoidCallback? onLike;
 
-  const LikeButton({this.onLike});
+  const LikeButton({super.key, this.onLike});
 
   @override
-  _LikeButtonState createState() => _LikeButtonState();
+  LikeButtonState createState() => LikeButtonState();
 }
 
-class _LikeButtonState extends State<LikeButton> {
+class LikeButtonState extends State<LikeButton> {
   bool _isLiked = false;
 
   @override

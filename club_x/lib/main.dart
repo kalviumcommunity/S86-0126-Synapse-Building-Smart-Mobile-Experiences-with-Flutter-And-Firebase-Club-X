@@ -91,7 +91,7 @@ Future<void> main() async {
 }
 
 class ClubXApp extends StatelessWidget {
-  const ClubXApp({Key? key}) : super(key: key);
+  const ClubXApp({super.key});
 
   @override
   Widget build(BuildContext context) {
