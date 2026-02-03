@@ -998,19 +998,43 @@ flutter run
 - Commit message:
 
 ```
-feat: connected Flutter app with Firebase project
+feat: integrated Firebase SDKs using FlutterFire CLI
 ```
 
 - PR title:
 
 ```
-[Sprint-2] Firebase Integration Setup – TeamName
+[Sprint-2] Firebase SDK Integration with FlutterFire CLI – TeamName
 ```
 
 - PR description should include:
   - Short summary of setup steps and files added/modified
-  - Screenshot(s) showing the app in Firebase Console (Project Settings → Your Apps)
-  - Short reflection: what was important, errors encountered and fixes, how this prepares the app for Authentication/Storage
+  - Screenshot(s) showing the app in Firebase Console (Project Settings → Your Apps) and terminal logs from `flutterfire configure`
+  - Short reflection: what was important, errors encountered and fixes, how this prepares the app for Authentication/Firestore
+
+---
+
+### 🔬 Demo Screens (new)
+
+This repository now includes two small Firebase demo screens to validate Auth and Firestore integration:
+
+- **Auth Demo** — `lib/screens/auth_demo.dart`
+  - Email/password sign-up and sign-in flows using `firebase_auth`.
+  - Access at route `/auth` (use `goNamed('auth')` or visit the route in the app).
+
+- **Firestore Demo** — `lib/screens/firestore_demo.dart`
+  - Add simple text messages to a `messages` collection and list them using a `StreamBuilder`.
+  - Access at route `/firestore` (use `goNamed('firestore')`).
+
+How to run the demos:
+
+```bash
+flutter pub get
+flutter run -d <device-id>
+# In the running app navigate to /auth or /firestore via the UI or deep link
+```
+
+Include a screenshot or short recording demonstrating sign-up/sign-in or Firestore write/read in your PR.
 
 ---
 
