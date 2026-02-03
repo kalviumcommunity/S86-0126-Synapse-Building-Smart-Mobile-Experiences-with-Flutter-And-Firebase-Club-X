@@ -552,11 +552,11 @@ To test different orientations:
 
 ---
 
-## 🔐 Sprint #3: Firebase Authentication (Email & Password)
+## 🔐 Sprint #3: Complete Authentication Flow (Sign Up, Login, Logout)
 
 ### 📖 Overview
 
-This sprint implements secure user authentication using **Firebase Authentication** with Email and Password sign-in method. Firebase Auth provides enterprise-grade authentication without requiring a custom backend, handling user identity, session management, and security automatically.
+This sprint implements a complete, production-ready authentication system using **Firebase Authentication**. The app features seamless navigation between authentication states, automatic screen transitions, and secure session management—mirroring real-world authentication flows found in professional applications.
 
 ### ✨ What is Firebase Authentication?
 
@@ -566,18 +566,80 @@ Firebase Authentication is a comprehensive identity solution that supports multi
 - Phone Number Authentication
 - Apple, GitHub, Facebook, and more
 
-### 🎯 Features Implemented
+### 🎯 Complete Features Implemented
 
-- ✅ User Registration (Sign Up) with email and password
-- ✅ User Login (Sign In) with existing credentials
-- ✅ Real-time authentication state monitoring
-- ✅ User session management
-- ✅ Secure logout functionality
-- ✅ Email validation
-- ✅ Password strength enforcement (minimum 6 characters)
-- ✅ Comprehensive error handling with user-friendly messages
-- ✅ Visual feedback for authentication states
-- ✅ Display authenticated user information
+#### Authentication Features
+- ✅ **User Sign Up**: Create new accounts with email/password validation
+- ✅ **User Login**: Authenticate existing users securely
+- ✅ **User Logout**: End sessions and clear authentication state
+- ✅ **Real-time Auth State**: Automatic navigation based on authentication status
+- ✅ **Session Management**: Persistent login across app restarts
+- ✅ **Input Validation**: Email format and password strength (minimum 6 characters)
+- ✅ **Error Handling**: User-friendly messages for all authentication errors
+
+#### User Experience Features
+- ✅ **Seamless Navigation**: Zero manual routing—automatic screen transitions
+- ✅ **Loading States**: Visual feedback during authentication operations
+- ✅ **User Information Display**: Show email, UID, and verification status
+- ✅ **Dual-Mode Interface**: Toggle between Login/Sign Up on same screen
+- ✅ **No Flicker Navigation**: Smooth transitions without visual glitches
+
+### 🔄 Authentication Flow Explained
+
+#### The Complete Flow
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  1. App Starts                                          │
+│     ↓                                                   │
+│  2. Firebase Initializes                               │
+│     ↓                                                   │
+│  3. authStateChanges() Stream Listens                  │
+│     ↓                                                   │
+│  4. Check: User Logged In?                             │
+│     ├─ YES → Show HomeScreen                           │
+│     └─ NO  → Show AuthScreen                           │
+│                                                         │
+│  5. User Actions:                                      │
+│     ┌──────────────────────────────────────┐          │
+│     │ Sign Up                              │          │
+│     │  → Create account                    │          │
+│     │  → Auto-navigate to HomeScreen       │          │
+│     └──────────────────────────────────────┘          │
+│     ┌──────────────────────────────────────┐          │
+│     │ Login                                │          │
+│     │  → Authenticate credentials          │          │
+│     │  → Auto-navigate to HomeScreen       │          │
+│     └──────────────────────────────────────┘          │
+│     ┌──────────────────────────────────────┐          │
+│     │ Logout (from HomeScreen)             │          │
+│     │  → Clear session                     │          │
+│     │  → Auto-navigate to AuthScreen       │          │
+│     └──────────────────────────────────────┘          │
+└─────────────────────────────────────────────────────────┘
+```
+
+#### How authStateChanges() Enables Automatic Navigation
+
+The magic of seamless navigation comes from `StreamBuilder` listening to `authStateChanges()`:
+
+```dart
+StreamBuilder<User?>(
+  stream: FirebaseAuth.instance.authStateChanges(),
+  builder: (ctx, snapshot) {
+    if (snapshot.hasData) {
+      return HomeScreen();  // User is logged in
+    }
+    return AuthScreen();    // User is not logged in
+  },
+)
+```
+
+**What happens:**
+1. **Initial Load**: Stream checks if user is logged in
+2. **Sign Up/Login**: When authentication succeeds, stream emits User object → HomeScreen shown
+3. **Logout**: When `signOut()` is called, stream emits null → AuthScreen shown
+4. **No manual navigation needed**: The stream automatically triggers rebuilds
 
 ### 🔧 Implementation Details
 
@@ -589,7 +651,7 @@ Firebase Authentication is a comprehensive identity solution that supports multi
 3. Click **Email/Password**
 4. Enable the toggle and click **Save**
 
-#### 2. Dependencies Added
+#### 2. Dependencies
 
 ```yaml
 dependencies:
@@ -597,9 +659,10 @@ dependencies:
   firebase_auth: ^5.0.0    # Firebase Authentication
 ```
 
-#### 3. Code Structure
+#### 3. Main Entry Point (main.dart)
 
-**Main Entry Point (`main.dart`):**
+**Initialization and Navigation Logic:**
+
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -608,149 +671,240 @@ void main() async {
   );
   runApp(const MyApp());
 }
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Auth Flow Demo',
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (ctx, snapshot) {
+          // Show loading while checking auth state
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          
+          // User logged in → HomeScreen
+          if (snapshot.hasData) {
+            return HomeScreen();
+          }
+          
+          // User not logged in → AuthScreen
+          return AuthScreen();
+        },
+      ),
+    );
+  }
+}
 ```
 
-**Authentication Screen (`auth_screen.dart`):**
-- Dual-mode interface (Login/Signup toggle)
-- Email and password input fields with validation
-- Real-time authentication state using `StreamBuilder`
-- Automatic UI updates based on user sign-in status
-- Error handling for common authentication issues
+**Key Points:**
+- Firebase initialized before app runs
+- StreamBuilder listens to authentication state changes
+- Loading indicator shown during initial auth check
+- Navigation happens automatically—no Navigator.push() needed
 
-#### 4. Key Firebase Auth Methods Used
+#### 4. Authentication Screen (auth_screen.dart)
+
+**Sign Up Logic:**
 
 ```dart
-// Sign Up
+// Create new user account
 await FirebaseAuth.instance.createUserWithEmailAndPassword(
   email: email,
   password: password,
 );
+// No navigation code needed - authStateChanges() handles it
+```
 
-// Sign In
+**Login Logic:**
+
+```dart
+// Authenticate existing user
 await FirebaseAuth.instance.signInWithEmailAndPassword(
   email: email,
   password: password,
 );
-
-// Sign Out
-await FirebaseAuth.instance.signOut();
-
-// Monitor Auth State
-FirebaseAuth.instance.authStateChanges().listen((User? user) {
-  // React to authentication state changes
-});
+// Automatically redirects to HomeScreen via StreamBuilder
 ```
 
-#### 5. Error Handling
+**Features:**
+- Dual-mode interface (toggle between Login/Sign Up)
+- Email and password validation before submission
+- Comprehensive error handling with specific messages
+- Loading state during authentication
+- Visual feedback with SnackBars
 
-The implementation handles various Firebase authentication errors:
-- `weak-password` - Password is too weak
-- `email-already-in-use` - Email already registered
-- `user-not-found` - No account with this email
-- `wrong-password` - Incorrect password
-- `invalid-email` - Email format is invalid
+#### 5. Home Screen (home_screen.dart)
+
+**Logout Logic:**
+
+```dart
+Future<void> _handleLogout(BuildContext context) async {
+  await FirebaseAuth.instance.signOut();
+  // authStateChanges() detects logout → auto-navigates to AuthScreen
+}
+```
+
+**Features:**
+- Display user email and UID
+- Show email verification status
+- Logout button in AppBar and main screen
+- Professional card-based UI design
+- No manual navigation—trust the auth state stream
+
+#### 6. Error Handling
+
+The implementation handles all common Firebase authentication errors:
+
+| Error Code | User-Friendly Message |
+|------------|----------------------|
+| `weak-password` | The password provided is too weak |
+| `email-already-in-use` | An account already exists for that email |
+| `user-not-found` | No user found for that email |
+| `wrong-password` | Wrong password provided |
+| `invalid-email` | The email address is not valid |
 
 ### 📱 User Experience Flow
 
-1. **First-time User:**
-   - Enters email and password
-   - Clicks "Sign Up"
-   - Account created in Firebase
-   - Automatically signed in
-   - User info displayed
+#### First-Time User Journey
 
-2. **Returning User:**
-   - Enters credentials
-   - Clicks "Login"
-   - Authenticated against Firebase
-   - Session established
-   - User info displayed
+1. **App Launch** → AuthScreen displayed (no existing session)
+2. **User Action** → Enters email and password
+3. **Sign Up** → Clicks "Sign Up" button
+4. **Account Created** → Firebase creates user account
+5. **Auto-Navigate** → Instantly redirected to HomeScreen
+6. **Welcome** → User info displayed (email, UID)
 
-3. **Signed-in User:**
-   - Views their email and user ID
-   - Can sign out with one click
-   - Returns to login screen
+#### Returning User Journey
+
+1. **App Launch** → Loading indicator briefly shown
+2. **Session Check** → authStateChanges() detects existing session
+3. **Auto-Navigate** → Directly to HomeScreen (skip login)
+4. **Welcome Back** → User's information displayed
+
+#### Logout Journey
+
+1. **User Action** → Clicks logout icon/button
+2. **Session Clear** → FirebaseAuth.instance.signOut() called
+3. **Auto-Navigate** → Instantly redirected to AuthScreen
+4. **Ready for Login** → Can log in again or create new account
 
 ### 🔒 Security Features
 
-- **Password Encryption**: Firebase automatically encrypts passwords
-- **Secure Sessions**: Token-based authentication with automatic refresh
-- **Client-side Validation**: Email format and password length checks
-- **Server-side Validation**: Firebase validates all authentication requests
-- **No Plain-text Storage**: Passwords never stored in plain text
+- **Password Encryption**: Firebase automatically hashes passwords with bcrypt
+- **Secure Sessions**: JWT token-based authentication with automatic refresh
+- **Client-Side Validation**: Prevent invalid submissions before reaching server
+- **Server-Side Validation**: Firebase validates all authentication requests
+- **No Plain-Text Storage**: Passwords never stored or transmitted in plain text
+- **HTTPS Only**: All communication encrypted in transit
+- **Session Expiration**: Tokens automatically refresh or expire based on usage
 
-### 📊 Verification Steps
+### 📊 Verification in Firebase Console
 
-After implementation, verify in Firebase Console:
+After implementation, verify everything works:
+
 1. Navigate to **Firebase Console** → **Authentication** → **Users**
 2. You'll see registered users with:
    - Email address
    - User ID (UID)
    - Sign-in provider (Email/Password)
    - Creation date
-   - Last sign-in time
+   - Last sign-in timestamp
 
 ### 🎓 Reflection
 
-**How does Firebase simplify authentication management?**
-- Eliminates the need to build and maintain custom authentication servers
-- Provides secure, industry-standard encryption and security practices
-- Handles session management, token refresh, and password recovery automatically
-- Offers built-in protection against common vulnerabilities
-- Scales automatically without infrastructure management
+**What was the hardest part of building the flow?**
+- Understanding asynchronous authentication and state management
+- Ensuring smooth navigation without flicker or delays
+- Implementing comprehensive error handling for all edge cases
+- Managing UI state during async operations (loading indicators)
+- Testing all authentication paths (signup, login, logout, errors)
+- Balancing security requirements with user experience
 
-**Security advantages over custom auth systems:**
-- Enterprise-grade security maintained by Google
-- Automatic security updates and patches
-- Protection against brute force attacks
-- Secure token generation and validation
-- No risk of storing passwords incorrectly
-- Built-in email verification and password reset
+**How does StreamBuilder simplify navigation?**
+- **Eliminates manual routing**: No need for Navigator.push/pop
+- **Reactive by nature**: UI automatically updates when auth state changes
+- **Single source of truth**: Authentication state drives navigation logic
+- **No state management needed**: Stream handles state internally
+- **Prevents navigation errors**: Can't navigate to wrong screen
+- **Cleaner code**: Reduces boilerplate and potential bugs
 
-**Challenges faced:**
-- Understanding asynchronous authentication flow
-- Implementing proper error handling for all edge cases
-- Managing UI state during authentication operations
-- Balancing user experience with security requirements
-- Testing authentication flows without exposing credentials
+**Why is logout essential for session security?**
+- **Prevents unauthorized access**: Users can't access account after logout
+- **Shared device protection**: Important for public or family devices
+- **Token revocation**: Clears authentication tokens from device
+- **Session control**: Users have full control over their sessions
+- **Compliance**: Required for data protection regulations (GDPR, etc.)
+- **Best practice**: Industry standard for secure applications
 
 ### 🛠️ Common Issues & Solutions
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `PlatformException (ERROR_INVALID_EMAIL)` | Invalid email format | Validate email pattern before submission |
-| `Password should be at least 6 characters` | Firebase password requirement | Enforce minimum 6 characters client-side |
-| `Firebase not initialized` | Missing Firebase initialization | Add `await Firebase.initializeApp()` in `main()` |
-| `App crashes on sign-in` | Dependency mismatch | Run `flutter pub get` and verify versions |
-| `Email already in use` | Attempting to register existing email | Switch to login mode or use password reset |
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| App stuck on loading screen | Firebase not initialized properly | Ensure `await Firebase.initializeApp()` in main() |
+| Login succeeds but stays on AuthScreen | Not using authStateChanges() | Replace manual navigation with StreamBuilder |
+| "Email already in use" error | Attempting to sign up with existing email | Switch to login mode or implement password reset |
+| Navigation flickers | Multiple StreamBuilders | Use single StreamBuilder in MaterialApp home |
+| Logout doesn't navigate back | Not monitoring auth state | Ensure StreamBuilder wraps navigation logic |
+| Password validation ignored | Client-side validation missing | Add validation before calling Firebase methods |
 
 ### 📸 Screenshots
 
-**Login Screen:**
-- Clean, intuitive interface
-- Email and password input fields
-- Toggle between login/signup modes
+**AuthScreen (Login Mode):**
+- Clean, modern interface with Material Design 3
+- Email and password input fields with icons
+- Large "Login" button
+- Toggle text: "Create new account"
+- Loading indicator during authentication
+- Lock icon at top
 
-**Authenticated Screen:**
-- Success indicator
-- User email display
-- User ID (UID) display
-- Sign out button
+**AuthScreen (Sign Up Mode):**
+- Same clean interface
+- Large "Sign Up" button
+- Toggle text: "Already have an account? Login"
+- Password helper text: "Minimum 6 characters"
+- Input validation before submission
+
+**HomeScreen (Logged In):**
+- Success checkmark icon
+- "You are logged in!" message
+- User information card displaying:
+  - Email address
+  - User ID (UID)
+  - Email verification status
+- Logout icon in AppBar
+- Prominent "Sign Out" button
+- Professional card-based layout
 
 **Firebase Console:**
 - Navigate to Authentication → Users
-- View all registered users
-- Monitor sign-in activity
+- Table showing all registered users
+- Columns: Email, UID, Provider, Created, Last Sign-in
+- Verify users appear after sign up
 
 ### 🔗 Related Files
 
 ```
 lib/
-├── main.dart                      # Firebase initialization & app entry
-├── firebase_options.dart          # Platform-specific Firebase config
+├── main.dart                      # Firebase initialization & auth-based navigation
+├── firebase_options.dart          # Platform-specific Firebase config (auto-generated)
 └── screens/
-    └── auth_screen.dart           # Authentication UI & logic
+    ├── auth_screen.dart           # Authentication UI (Login/Sign Up)
+    ├── home_screen.dart           # Home screen for logged-in users
+    ├── widget_tree_demo.dart      # Widget Tree & Reactive UI demonstration
+    └── responsive_home.dart       # Responsive layout screen
 ```
+
+### Key Files
+
+- **`main.dart`**: Firebase initialization and StreamBuilder for auth-based navigation
+- **`auth_screen.dart`**: Dual-mode authentication screen with sign up and login functionality
+- **`home_screen.dart`**: Home screen displaying user info with logout functionality
+- **`firebase_options.dart`**: Platform-specific Firebase configuration (auto-generated)
 
 ---
 
@@ -793,21 +947,23 @@ flutter run -d <device-id>
 
 ```
 lib/
-├── main.dart                      # App entry point with Firebase initialization
-├── firebase_options.dart          # Firebase configuration
+├── main.dart                      # Firebase initialization & auth-based navigation
+├── firebase_options.dart          # Platform-specific Firebase config (auto-generated)
 └── screens/
-    ├── auth_screen.dart           # Firebase Authentication (Email/Password)
+    ├── auth_screen.dart           # Authentication UI (Login/Sign Up)
+    ├── home_screen.dart           # Home screen for logged-in users
     ├── widget_tree_demo.dart      # Widget Tree & Reactive UI demonstration
     └── responsive_home.dart       # Responsive layout screen
 ```
 
 ### Key Files
 
-- **`main.dart`**: Initializes Firebase, sets the theme, and launches the AuthScreen
-- **`auth_screen.dart`**: Complete Firebase Authentication implementation with login/signup
+- **`main.dart`**: Firebase initialization and StreamBuilder for auth-based navigation
+- **`auth_screen.dart`**: Dual-mode authentication screen with sign up and login functionality
+- **`home_screen.dart`**: Home screen displaying user info with logout functionality
 - **`firebase_options.dart`**: Platform-specific Firebase configuration (auto-generated)
-- **`widget_tree_demo.dart`**: Complete implementation of widget tree concepts and reactive UI with setState()
-- **`responsive_home.dart`**: Responsive layout logic for adaptive grid systems (previous sprint)
+- **`widget_tree_demo.dart`**: Widget tree concepts and reactive UI with setState()
+- **`responsive_home.dart`**: Responsive layout logic for adaptive grid systems
 
 ## 🎓 Learning Resources
 
@@ -818,16 +974,19 @@ lib/
 
 ## 👥 Development Sprints
 
-### Sprint #3 - Firebase Authentication ✅
-- ✅ Integrated Firebase SDK and initialized Firebase in the app
-- ✅ Implemented Email/Password authentication
-- ✅ Created dual-mode authentication screen (Login/Signup)
-- ✅ Added real-time authentication state monitoring with StreamBuilder
-- ✅ Implemented comprehensive error handling for authentication failures
-- ✅ Added input validation (email format, password length)
-- ✅ Built user information display for authenticated users
-- ✅ Implemented secure sign-out functionality
-- ✅ Documented authentication flow and security features
+### Sprint #3 - Complete Authentication Flow (Sign Up, Login, Logout) ✅
+- ✅ Integrated Firebase SDK and initialized Firebase before app startup
+- ✅ Implemented Email/Password authentication (Sign Up and Login)
+- ✅ Created dual-mode authentication screen with toggle functionality
+- ✅ Built dedicated HomeScreen for logged-in users
+- ✅ Implemented automatic navigation using authStateChanges() StreamBuilder
+- ✅ Added seamless screen transitions (no manual routing)
+- ✅ Implemented secure logout functionality with auto-redirect
+- ✅ Added comprehensive error handling for all authentication failures
+- ✅ Implemented input validation (email format, password strength)
+- ✅ Built user information display (email, UID, verification status)
+- ✅ Added loading states during authentication operations
+- ✅ Documented complete authentication flow with diagrams and reflections
 
 ### Sprint #2 - Widget Tree & Reactive UI Model ✅
 - ✅ Implemented comprehensive widget tree demonstration
