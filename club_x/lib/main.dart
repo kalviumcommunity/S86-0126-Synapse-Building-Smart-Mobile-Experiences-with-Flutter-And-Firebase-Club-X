@@ -11,6 +11,8 @@ import 'screens/state_management_demo.dart';
 import 'screens/custom_widgets_demo.dart';
 import 'screens/assets_demo_screen.dart';
 import 'screens/animations_demo.dart';
+import 'screens/auth_demo.dart';
+import 'screens/firestore_demo.dart';
 
 final GoRouter router = GoRouter(
   routes: [
@@ -53,6 +55,17 @@ final GoRouter router = GoRouter(
       path: '/assets-demo',
       name: 'assets-demo',
       builder: (context, state) => const AssetsDemoScreen(),
+    ),
+    // New demo routes for Firebase features
+    GoRoute(
+      path: '/auth',
+      name: 'auth',
+      builder: (context, state) => const AuthDemo(),
+    ),
+    GoRoute(
+      path: '/firestore',
+      name: 'firestore',
+      builder: (context, state) => const FirestoreDemo(),
     ),
     GoRoute(
       path: '/animations',
