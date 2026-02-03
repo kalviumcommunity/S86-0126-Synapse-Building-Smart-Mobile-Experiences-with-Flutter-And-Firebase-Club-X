@@ -852,7 +852,193 @@ After implementation, verify everything works:
 | Logout doesn't navigate back | Not monitoring auth state | Ensure StreamBuilder wraps navigation logic |
 | Password validation ignored | Client-side validation missing | Add validation before calling Firebase methods |
 
-### 📸 Screenshots
+### � Persistent Session Handling & Auto-Login
+
+#### How Firebase Session Persistence Works
+
+Firebase Auth **automatically persists user sessions** using secure tokens stored on the device. This provides a seamless user experience where users remain logged in even after:
+- Closing the app
+- Restarting their device
+- Clearing app from memory
+- Days or weeks of inactivity
+
+**Key Benefits:**
+- ✅ No manual token storage required (no SharedPreferences needed)
+- ✅ Tokens auto-refresh in the background
+- ✅ Secure encryption and storage handled by Firebase
+- ✅ Cross-platform consistency (iOS, Android, Web)
+- ✅ Automatic token invalidation on password change or account deletion
+
+#### Auto-Login Implementation
+
+The app uses `authStateChanges()` stream to detect session state and automatically navigate users:
+
+```dart
+StreamBuilder<User?>(
+  stream: FirebaseAuth.instance.authStateChanges(),
+  builder: (ctx, snapshot) {
+    // Show splash screen while checking session
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return SplashScreen();
+    }
+    
+    // User has valid session → Skip login, go to HomeScreen
+    if (snapshot.hasData) {
+      return HomeScreen();
+    }
+    
+    // No valid session → Show login screen
+    return AuthScreen();
+  },
+)
+```
+
+**What happens on app restart:**
+
+```
+1. App Opens
+   ↓
+2. Firebase Checks Local Storage for Token
+   ↓
+3. Token Found? → Validate with Firebase Server
+   ├─ Valid → authStateChanges() emits User → HomeScreen
+   └─ Invalid → authStateChanges() emits null → AuthScreen
+   ↓
+4. User sees correct screen automatically
+```
+
+#### Session Lifecycle Events
+
+The `authStateChanges()` stream emits events when:
+
+| Event | Trigger | Result |
+|-------|---------|--------|
+| **User Sign Up** | `createUserWithEmailAndPassword()` | Stream emits User → Navigate to HomeScreen |
+| **User Login** | `signInWithEmailAndPassword()` | Stream emits User → Navigate to HomeScreen |
+| **User Logout** | `signOut()` | Stream emits null → Navigate to AuthScreen |
+| **App Restart** | App reopens | Stream checks token → Auto-navigate based on validity |
+| **Token Refresh** | Background (automatic) | Silent refresh, user stays logged in |
+| **Token Expiry** | Password change, account delete | Stream emits null → Navigate to AuthScreen |
+
+#### Professional UX with Splash Screen
+
+While Firebase checks the session (typically 100-500ms), a professional splash screen provides visual feedback:
+
+```dart
+// Custom splash screen shown during auth state check
+class SplashScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        gradient: LinearGradient(...),
+        child: Column(
+          children: [
+            AppLogo(),
+            CircularProgressIndicator(),
+            Text('Checking session...'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+**Benefits:**
+- Prevents white screen flash on startup
+- Professional brand experience
+- User understands app is loading
+- Smooth transition to authenticated state
+
+#### Token Security & Automatic Refresh
+
+Firebase handles token management automatically:
+
+1. **Initial Authentication**: User logs in → Firebase issues access token and refresh token
+2. **Secure Storage**: Tokens stored in platform-specific secure storage (Keychain on iOS, EncryptedSharedPreferences on Android)
+3. **Auto-Refresh**: When access token expires (1 hour), Firebase automatically uses refresh token to get new access token
+4. **Seamless Experience**: User never sees "session expired" messages
+5. **Security**: Tokens use industry-standard JWT with encryption
+
+**Manual intervention NOT required for:**
+- Token refresh
+- Token storage
+- Token encryption
+- Session expiry handling
+
+#### Testing Persistent Login Behavior
+
+**Test Scenario 1: Normal Login → Restart**
+1. Login with valid credentials
+2. Verify HomeScreen appears
+3. Close app completely (swipe away from recent apps)
+4. Reopen app
+5. ✅ **Expected**: App opens directly on HomeScreen (no login screen)
+6. ✅ **Verify**: User email and UID still displayed
+
+**Test Scenario 2: Logout → Restart**
+1. From HomeScreen, click logout
+2. Verify AuthScreen appears
+3. Close app completely
+4. Reopen app
+5. ✅ **Expected**: App opens on AuthScreen (must login again)
+
+**Test Scenario 3: Fresh Install**
+1. Uninstall app
+2. Reinstall app
+3. Open app
+4. ✅ **Expected**: App opens on AuthScreen (no session exists)
+
+**Test Scenario 4: Multiple Days Later**
+1. Login and use app
+2. Leave app unused for several days
+3. Reopen app
+4. ✅ **Expected**: Still logged in, HomeScreen appears
+5. Firebase auto-refreshed tokens in background
+
+**Test Scenario 5: Device Restart**
+1. Login and verify HomeScreen
+2. Restart entire device
+3. Open app after device restarts
+4. ✅ **Expected**: Still logged in, auto-navigates to HomeScreen
+
+#### Handling Session Invalidation
+
+Sessions become invalid when:
+- User changes password from another device
+- User deletes account
+- Admin disables user account in Firebase Console
+- User clears app data manually
+
+**Automatic handling:**
+```dart
+// No manual code needed!
+// authStateChanges() automatically detects invalid session
+// → emits null → app navigates to AuthScreen
+```
+
+#### Clean Logout Implementation
+
+From HomeScreen, logout clears all session data:
+
+```dart
+Future<void> _handleLogout(BuildContext context) async {
+  await FirebaseAuth.instance.signOut();
+  // authStateChanges() detects logout → auto-navigates to AuthScreen
+  // No manual navigation needed
+  // All tokens cleared from device
+}
+```
+
+**What signOut() does:**
+1. Invalidates current session tokens
+2. Removes tokens from device storage
+3. Triggers authStateChanges() to emit null
+4. App automatically redirects to AuthScreen
+5. User must re-authenticate to access app
+
+### �📸 Screenshots
 
 **AuthScreen (Login Mode):**
 - Clean, modern interface with Material Design 3
@@ -947,21 +1133,23 @@ flutter run -d <device-id>
 
 ```
 lib/
-├── main.dart                      # Firebase initialization & auth-based navigation
-├── firebase_options.dart          # Platform-specific Firebase config (auto-generated)
+├── main.dart                      # Firebase init & authStateChanges navigation
+├── firebase_options.dart          # Platform-specific Firebase config
 └── screens/
+    ├── splash_screen.dart         # Loading screen during session check
     ├── auth_screen.dart           # Authentication UI (Login/Sign Up)
     ├── home_screen.dart           # Home screen for logged-in users
-    ├── widget_tree_demo.dart      # Widget Tree & Reactive UI demonstration
+    ├── widget_tree_demo.dart      # Widget Tree & Reactive UI demo
     └── responsive_home.dart       # Responsive layout screen
 ```
 
 ### Key Files
 
-- **`main.dart`**: Firebase initialization and StreamBuilder for auth-based navigation
-- **`auth_screen.dart`**: Dual-mode authentication screen with sign up and login functionality
-- **`home_screen.dart`**: Home screen displaying user info with logout functionality
-- **`firebase_options.dart`**: Platform-specific Firebase configuration (auto-generated)
+- **`main.dart`**: Firebase initialization and StreamBuilder for auto-login navigation
+- **`splash_screen.dart`**: Professional loading screen shown during session validation
+- **`auth_screen.dart`**: Dual-mode authentication screen (sign up/login)
+- **`home_screen.dart`**: Home screen with user info and logout functionality
+- **`firebase_options.dart`**: Platform-specific Firebase configuration
 - **`widget_tree_demo.dart`**: Widget tree concepts and reactive UI with setState()
 - **`responsive_home.dart`**: Responsive layout logic for adaptive grid systems
 
@@ -974,19 +1162,22 @@ lib/
 
 ## 👥 Development Sprints
 
-### Sprint #3 - Complete Authentication Flow (Sign Up, Login, Logout) ✅
+### Sprint #3 - Complete Authentication Flow with Persistent Sessions ✅
 - ✅ Integrated Firebase SDK and initialized Firebase before app startup
 - ✅ Implemented Email/Password authentication (Sign Up and Login)
 - ✅ Created dual-mode authentication screen with toggle functionality
 - ✅ Built dedicated HomeScreen for logged-in users
 - ✅ Implemented automatic navigation using authStateChanges() StreamBuilder
 - ✅ Added seamless screen transitions (no manual routing)
+- ✅ Implemented persistent login - users stay logged in after app restart
+- ✅ Created professional SplashScreen for session validation UX
 - ✅ Implemented secure logout functionality with auto-redirect
-- ✅ Added comprehensive error handling for all authentication failures
-- ✅ Implemented input validation (email format, password strength)
+- ✅ Added automatic token refresh and session management
+- ✅ Implemented comprehensive error handling for all authentication failures
+- ✅ Added input validation (email format, password strength)
 - ✅ Built user information display (email, UID, verification status)
 - ✅ Added loading states during authentication operations
-- ✅ Documented complete authentication flow with diagrams and reflections
+- ✅ Documented complete authentication flow, persistent sessions, and auto-login
 
 ### Sprint #2 - Widget Tree & Reactive UI Model ✅
 - ✅ Implemented comprehensive widget tree demonstration
