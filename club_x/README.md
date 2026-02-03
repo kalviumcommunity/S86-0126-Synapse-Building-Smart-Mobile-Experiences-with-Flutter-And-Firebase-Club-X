@@ -1,336 +1,32 @@
 # Club-X - Flutter Learning Project
 
-A comprehensive Flutter application demonstrating core concepts including stateless/stateful widgets, widget trees, reactive UI patterns, and responsive design. This project serves as both a learning tool and a showcase of Flutter's powerful features for building modern, adaptive mobile applications.
+A comprehensive Flutter application demonstrating core concepts including responsive layouts, widget trees, and reactive UI patterns. This project serves as both a learning tool and a showcase of Flutter's powerful features for building modern, adaptive mobile applications.
 
 ## 📱 Project Overview
 
 This project demonstrates fundamental Flutter concepts:
-
-- **Stateless & Stateful Widgets** - Understanding the two building blocks of Flutter apps
-- **Widget Tree Architecture** - How widgets form hierarchical structures
+- **Widget Tree Architecture** - Understanding how widgets form hierarchical structures
 - **Reactive UI Model** - How Flutter automatically updates UI based on state changes
+- **Responsive Design** - Creating layouts that adapt to different screen sizes and orientations
 - **State Management** - Using setState() for interactive UI updates
-- **Responsive Design** - Creating layouts that adapt to different screen sizes
 
 ### Key Features
 
-- ✅ Clear demonstrations of StatelessWidget vs StatefulWidget
-- ✅ Multiple interactive examples with state management
-- ✅ Real-time UI updates with visual feedback
-- ✅ Theme switching (Light/Dark mode)
+- ✅ Interactive Widget Tree demonstration with visual hierarchy
+- ✅ Reactive UI with multiple state management examples
+- ✅ Dynamic layout adaptation using `MediaQuery` and `LayoutBuilder`
+- ✅ Real-time state updates with visual feedback
 - ✅ Comprehensive documentation and code examples
 
-### 🧭 Navigation
-
-This app uses **GoRouter** for modern declarative routing:
-
-| Route            | Path                | Screen                    |
-| ---------------- | ------------------- | ------------------------- |
-| Home             | `/`                 | Stateless & Stateful Demo |
-| Responsive       | `/responsive`       | Responsive Layout Demo    |
-| Widget Tree      | `/widget-tree`      | Widget Tree Demo          |
-| Scrollable Views | `/scrollable-views` | ListView & GridView Demo  |
-| Custom Widgets   | `/custom-widgets`   | Reusable Custom Widgets   |
-
-Navigate using: `context.pushNamed('route-name')` or `context.go('/path')`
-
 ---
 
-## 🎯 Sprint #2: Creating and Using Stateless and Stateful Widgets
-
-### 📖 Understanding Widget Types
-
-Flutter has two fundamental types of widgets that form the building blocks of every app:
-
-#### StatelessWidget
-
-A **StatelessWidget** is a widget that **does not store any mutable state**. Once built, it remains unchanged until rebuilt by its parent widget.
-
-**Characteristics:**
-
-- Immutable - cannot change after creation
-- No internal state to manage
-- Rebuilt only by parent widget
-- More lightweight and performant
-- Perfect for static content
-
-**When to use:**
-
-- Displaying static text, labels, or titles
-- Showing icons and images
-- Creating reusable UI components that don't change
-- Building layouts that remain constant
-- Presenting information that doesn't need updating
-
-**Example:**
-
-```dart
-class GreetingWidget extends StatelessWidget {
-  final String name;
-
-  const GreetingWidget({required this.name});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text('Hello, $name!');
-  }
-}
-```
-
-#### StatefulWidget
-
-A **StatefulWidget** is a widget that **maintains internal state** that can change during the app's lifecycle.
-
-**Characteristics:**
-
-- Mutable - can change over time
-- Has internal state managed by a State object
-- Can update itself using setState()
-- Responds to user interactions
-- Perfect for dynamic content
-
-**When to use:**
-
-- Interactive elements (buttons, forms, sliders)
-- Displaying data that changes over time
-- Animations and transitions
-- User input handling
-- Real-time data updates
-
-**Example:**
-
-```dart
-class CounterWidget extends StatefulWidget {
-  @override
-  _CounterWidgetState createState() => _CounterWidgetState();
-}
-
-class _CounterWidgetState extends State<CounterWidget> {
-  int count = 0;
-
-  void increment() {
-    setState(() {
-      count++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text('Count: $count'),
-        ElevatedButton(onPressed: increment, child: Text('Increase')),
-      ],
-    );
-  }
-}
-```
-
-### 🎨 Demo App Features
-
-Our demo app showcases both widget types with practical examples:
-
-#### Stateless Widget Examples
-
-1. **Static Header** - Section headers with icons and descriptions
-
-   ```dart
-   class StaticHeader extends StatelessWidget {
-     final String title;
-     final String subtitle;
-     final IconData icon;
-     final Color color;
-     // Displays information that never changes
-   }
-   ```
-
-2. **Info Card** - Static information display
-
-   ```dart
-   class StaticInfoCard extends StatelessWidget {
-     final String title;
-     final String description;
-     // Shows content that remains constant
-   }
-   ```
-
-3. **Greeting Widget** - Personalized greeting message
-
-   ```dart
-   class GreetingWidget extends StatelessWidget {
-     final String name;
-     // Displays "Hello, [name]!" - changes only when parent rebuilds with new name
-   }
-   ```
-
-4. **Feature Icons** - Static feature display row
-   ```dart
-   class StaticFeatureRow extends StatelessWidget {
-     // Shows unchanging feature icons (Fast, Secure, Scalable)
-   }
-   ```
-
-#### Stateful Widget Examples
-
-1. **Interactive Counter** - Classic counter with increment/decrement
-   - State: `int _count`
-   - Actions: Increase, Decrease, Reset
-   - Updates: Counter display changes instantly
-
-2. **Color Changer** - Cycles through different colors
-   - State: `int _colorIndex`, `List<Color> _colors`
-   - Action: Change Color button
-   - Updates: Background animates to new color
-
-3. **Toggle Switch** - ON/OFF state management
-   - State: `bool _isEnabled`
-   - Action: Switch toggle
-   - Updates: Icon, text, and background color change
-
-4. **Like Button** - Favorite/unfavorite with count
-   - State: `bool _isLiked`, `int _likeCount`
-   - Action: Tap heart icon
-   - Updates: Heart fills/unfills, count adjusts
-
-5. **Text Input** - Real-time text display
-   - State: `String _inputText`
-   - Action: Type in TextField
-   - Updates: Text and character count update as you type
-
-### 🔄 How setState() Works
-
-The `setState()` method is the key to reactive UI in StatefulWidget:
-
-```dart
-void _updateState() {
-  setState(() {
-    // 1. Modify state variables here
-    _counter++;
-    _message = 'Updated!';
-  });
-  // 2. Flutter automatically rebuilds the widget
-  // 3. UI reflects the new state
-}
-```
-
-**Process:**
-
-1. User interacts with the UI (button press, toggle, text input)
-2. Event handler is called
-3. `setState()` is invoked with state changes
-4. Flutter marks the widget as "dirty" (needs rebuild)
-5. `build()` method runs again with new state values
-6. Flutter efficiently updates only what changed
-7. User sees the updated UI
-
-### 📊 Quick Comparison
-
-| Aspect          | StatelessWidget              | StatefulWidget                 |
-| --------------- | ---------------------------- | ------------------------------ |
-| **State**       | No mutable state             | Has mutable state              |
-| **Updates**     | Rebuilt by parent            | Updates itself with setState() |
-| **Performance** | Slightly faster              | Manages state overhead         |
-| **Use Cases**   | Static text, icons, labels   | Forms, buttons, animations     |
-| **Complexity**  | Simple, one class            | Two classes (widget + state)   |
-| **Examples**    | Text, Icon, Image, Container | TextField, Checkbox, Slider    |
-
-### 💡 Why Separation Matters
-
-**Benefits of separating static and dynamic UI:**
-
-1. **Performance Optimization**
-   - Stateless widgets don't rebuild unnecessarily
-   - Flutter can optimize rendering for immutable widgets
-   - Reduces computational overhead
-
-2. **Code Organization**
-   - Clear distinction between static and dynamic parts
-   - Easier to understand which parts of UI can change
-   - Better code maintainability
-
-3. **Debugging**
-   - Stateless widgets have no state to track
-   - Stateful widgets isolate state changes
-   - Easier to identify source of bugs
-
-4. **Reusability**
-   - Stateless widgets are highly reusable
-   - Stateful widgets can be customized with parameters
-   - Both promote component-based architecture
-
-### 🎮 Interactive Features
-
-Try these interactions in the demo app:
-
-1. **Counter** - Click Increase/Decrease/Reset to see instant updates
-2. **Color Changer** - Tap to cycle through 6 different colors
-3. **Toggle Switch** - Switch ON/OFF to change feature state
-4. **Like Button** - Click heart to like/unlike and watch count change
-5. **Text Input** - Type to see real-time character count
-6. **Theme Toggle** - Switch between Light and Dark mode (AppBar icon)
-
-### 📸 Screenshots
-
-#### Initial State (Light Mode)
-
-![Initial State](screenshots/stateless_stateful/initial_state.png)
-_App showing all stateless and stateful widgets in default state_
-
-#### After Interactions
-
-![After Interactions](screenshots/stateless_stateful/after_interactions.png)
-_Counter increased, color changed, toggle enabled, text entered_
-
-#### Dark Mode
-
-![Dark Mode](screenshots/stateless_stateful/dark_mode.png)
-_App with dark theme enabled_
-
-### 💭 Reflection
-
-**How do Stateful widgets make Flutter apps dynamic?**
-
-Stateful widgets enable dynamic, interactive applications by:
-
-- Storing and managing mutable state
-- Responding to user input in real-time
-- Updating UI automatically when state changes
-- Creating engaging user experiences
-- Handling complex user interactions
-- Supporting animations and transitions
-
-Without StatefulWidget, every app would be static and non-interactive. StatefulWidget is essential for:
-
-- Forms and input validation
-- Shopping carts and counters
-- Real-time data displays
-- Interactive games
-- Social media likes/comments
-- Any feature requiring user interaction
-
-**Why is it important to separate static and reactive parts?**
-
-Separation provides several critical benefits:
-
-1. **Performance**: Static widgets don't rebuild unnecessarily, saving CPU and battery
-2. **Clarity**: Developers immediately see which parts can change
-3. **Maintainability**: Easier to update and debug specific functionality
-4. **Testing**: Stateless widgets are easier to test (no state to mock)
-5. **Optimization**: Flutter can cache and reuse stateless widgets efficiently
-6. **Best Practice**: Follows Flutter's design philosophy of composable widgets
-
-By using StatelessWidget for headers, labels, and static content, and StatefulWidget only where needed, we create efficient, maintainable, and performant applications.
-
----
-
-## 🌲 Widget Tree & Reactive UI Model (Previous Task)
+## 🌲 Sprint #2: Understanding the Widget Tree and Reactive UI Model
 
 ### 📖 Concept Overview
 
 In Flutter, **everything is a widget**. From simple elements like text and buttons to complex layouts and entire screens - they're all widgets arranged in a tree-like hierarchy.
 
 The **widget tree** is the foundation of how Flutter builds and updates UIs:
-
 - Each widget is a node in the tree
 - Widgets have parent-child relationships
 - The root is typically `MaterialApp` or `CupertinoApp`
@@ -339,7 +35,6 @@ The **widget tree** is the foundation of how Flutter builds and updates UIs:
 ### 🔄 The Reactive UI Model
 
 Flutter's UI is **reactive**, meaning:
-
 1. **State changes trigger rebuilds** - When data changes, Flutter automatically updates the UI
 2. **Efficient updates** - Only affected parts of the widget tree are rebuilt
 3. **Declarative approach** - You describe what the UI should look like, Flutter handles the rest
@@ -412,11 +107,10 @@ MaterialApp (Root Widget)
 Our demo app showcases multiple types of reactive state updates:
 
 #### 1. **Counter State** (`int _counter`)
-
 - **What it does**: Tracks a numeric value that can be incremented, decremented, or reset
-- **Interactive elements**:
+- **Interactive elements**: 
   - Increment button (+1)
-  - Decrement button (-1)
+  - Decrement button (-1) 
   - Reset button (back to 0)
   - FloatingActionButton (quick increment)
 - **UI updates**: Counter display badge, status message, profile statistics
@@ -431,7 +125,6 @@ void _incrementCounter() {
 ```
 
 #### 2. **Background Color State** (`Color _backgroundColor`)
-
 - **What it does**: Cycles through different background colors
 - **Interactive element**: "Change Background Color" button
 - **UI updates**: Entire screen background animates to new color
@@ -448,7 +141,6 @@ void _changeBackgroundColor() {
 ```
 
 #### 3. **Visibility Toggle State** (`bool _isProfileVisible`)
-
 - **What it does**: Shows or hides the profile card widget
 - **Interactive element**: "Toggle Profile Visibility" button
 - **UI updates**: Profile card appears/disappears from the widget tree
@@ -458,15 +150,14 @@ void _changeBackgroundColor() {
 void _toggleProfileVisibility() {
   setState(() {
     _isProfileVisible = !_isProfileVisible;
-    _statusMessage = _isProfileVisible
-        ? 'Profile card is now visible'
+    _statusMessage = _isProfileVisible 
+        ? 'Profile card is now visible' 
         : 'Profile card is now hidden';
   });
 }
 ```
 
 #### 4. **Slider Value State** (`double _sliderValue`)
-
 - **What it does**: Tracks a continuous value from 0 to 100
 - **Interactive element**: Slider widget
 - **UI updates**: Real-time value display, progress indicator
@@ -482,7 +173,6 @@ void _onSliderChanged(double value) {
 ```
 
 #### 5. **Status Message State** (`String _statusMessage`)
-
 - **What it does**: Provides feedback about user interactions
 - **Updates from**: All interactive elements
 - **UI location**: Status card at top of screen
@@ -491,9 +181,7 @@ void _onSliderChanged(double value) {
 ### 📸 Visual State Changes
 
 #### Initial State
-
 When the app first loads:
-
 - Counter: 0
 - Background: White
 - Profile Card: Visible
@@ -501,9 +189,7 @@ When the app first loads:
 - Status: "Welcome to Club-X!"
 
 #### After User Interactions
-
 After clicking increment 5 times, changing background, and adjusting slider:
-
 - Counter: 5
 - Background: Light Blue
 - Profile Card: Visible (showing Posts: 15, Followers: 50, Following: 25)
@@ -511,9 +197,7 @@ After clicking increment 5 times, changing background, and adjusting slider:
 - Status: Updates to reflect last action
 
 #### With Profile Hidden
-
 After toggling profile visibility:
-
 - Profile card disappears from the widget tree
 - Layout adjusts automatically
 - Button text changes to "Show Profile Card"
@@ -534,21 +218,18 @@ Every interactive element in our app uses `setState()` to trigger UI updates:
 ### 💡 Key Learnings
 
 #### Widget Tree Concepts
-
 - **Hierarchy Matters**: Child widgets inherit context from parents
 - **Composition Over Inheritance**: Complex UIs are built by composing simple widgets
 - **Reusability**: Extract repeated widget patterns into methods or classes
 - **Readability**: Proper indentation shows parent-child relationships clearly
 
 #### Reactive UI Benefits
-
 - **Automatic Updates**: No manual DOM manipulation needed
 - **Type Safety**: Compile-time checking prevents many bugs
 - **Hot Reload**: See changes instantly during development
 - **Predictable**: State changes always trigger consistent UI updates
 
 #### setState() Best Practices
-
 - **Only Update Inside setState()**: State changes must be wrapped in `setState()`
 - **Keep It Simple**: Perform simple state updates, not complex calculations
 - **Batch Updates**: Multiple state changes in one `setState()` call are efficient
@@ -586,7 +267,6 @@ Try these interactions to see the reactive UI in action:
 ### 📱 Code Implementation Highlights
 
 #### Stateful Widget Setup
-
 ```dart
 class WidgetTreeDemo extends StatefulWidget {
   const WidgetTreeDemo({super.key});
@@ -602,23 +282,22 @@ class _WidgetTreeDemoState extends State<WidgetTreeDemo> {
   bool _isProfileVisible = true;
   String _statusMessage = 'Welcome to Club-X!';
   double _sliderValue = 50.0;
-
+  
   // State update methods using setState()...
 }
 ```
 
 #### Conditional Widget Rendering
-
 ```dart
 Column(
   children: [
     _buildStatusCard(),
     _buildCounterSection(),
     _buildInteractiveControlsSection(),
-
+    
     // Profile card only appears when _isProfileVisible is true
     if (_isProfileVisible) _buildProfileCard(),
-
+    
     _buildSliderSection(),
     _buildWidgetTreeVisualization(),
   ],
@@ -626,7 +305,6 @@ Column(
 ```
 
 #### Dynamic Values in Widgets
-
 ```dart
 Text(
   '$_counter',  // Counter value updates automatically
@@ -774,36 +452,28 @@ isTablet || isLandscape
 ## 📸 Screenshots
 
 ### Phone - Portrait Mode
-
-_(Screenshot showing single-column layout on a phone in portrait orientation)_
-
+*(Screenshot showing single-column layout on a phone in portrait orientation)*
 - Compact spacing and smaller text sizes
 - Single-column grid for main content
 - Stacked feature cards
 - Vertical button layout
 
 ### Phone - Landscape Mode
-
-_(Screenshot showing adapted layout on a phone in landscape)_
-
+*(Screenshot showing adapted layout on a phone in landscape)*
 - Adjusted aspect ratios for images
 - Multi-column grid (2 columns)
 - Horizontal feature card layout
 - Side-by-side buttons
 
 ### Tablet - Portrait Mode
-
-_(Screenshot showing expanded layout on a tablet in portrait)_
-
+*(Screenshot showing expanded layout on a tablet in portrait)*
 - Larger text and spacing
 - 3-column grid layout
 - Horizontal feature cards
 - Generous padding
 
 ### Tablet - Landscape Mode
-
-_(Screenshot showing full-width layout on a tablet in landscape)_
-
+*(Screenshot showing full-width layout on a tablet in landscape)*
 - Maximum columns in grid (4 columns)
 - Wide aspect ratio images
 - Optimal use of horizontal space
@@ -824,7 +494,6 @@ The app has been tested on multiple device configurations:
 ### Testing Orientations
 
 To test different orientations:
-
 1. Run the app on an emulator or physical device
 2. Rotate the device or use the emulator's rotation controls
 3. Observe how layouts smoothly transition between orientations
@@ -881,10 +550,213 @@ To test different orientations:
    - Reduces development and maintenance time
    - Easier to add new features without breaking layouts
 
+---
+
+## 🔐 Sprint #3: Firebase Authentication (Email & Password)
+
+### 📖 Overview
+
+This sprint implements secure user authentication using **Firebase Authentication** with Email and Password sign-in method. Firebase Auth provides enterprise-grade authentication without requiring a custom backend, handling user identity, session management, and security automatically.
+
+### ✨ What is Firebase Authentication?
+
+Firebase Authentication is a comprehensive identity solution that supports multiple authentication providers:
+- **Email and Password** (Implemented in this sprint)
+- Google Sign-In
+- Phone Number Authentication
+- Apple, GitHub, Facebook, and more
+
+### 🎯 Features Implemented
+
+- ✅ User Registration (Sign Up) with email and password
+- ✅ User Login (Sign In) with existing credentials
+- ✅ Real-time authentication state monitoring
+- ✅ User session management
+- ✅ Secure logout functionality
+- ✅ Email validation
+- ✅ Password strength enforcement (minimum 6 characters)
+- ✅ Comprehensive error handling with user-friendly messages
+- ✅ Visual feedback for authentication states
+- ✅ Display authenticated user information
+
+### 🔧 Implementation Details
+
+#### 1. Firebase Setup
+
+**Enable Email/Password Authentication:**
+1. Open [Firebase Console](https://console.firebase.google.com)
+2. Navigate to **Authentication** → **Sign-in method**
+3. Click **Email/Password**
+4. Enable the toggle and click **Save**
+
+#### 2. Dependencies Added
+
+```yaml
+dependencies:
+  firebase_core: ^3.0.0    # Firebase SDK core
+  firebase_auth: ^5.0.0    # Firebase Authentication
+```
+
+#### 3. Code Structure
+
+**Main Entry Point (`main.dart`):**
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const MyApp());
+}
+```
+
+**Authentication Screen (`auth_screen.dart`):**
+- Dual-mode interface (Login/Signup toggle)
+- Email and password input fields with validation
+- Real-time authentication state using `StreamBuilder`
+- Automatic UI updates based on user sign-in status
+- Error handling for common authentication issues
+
+#### 4. Key Firebase Auth Methods Used
+
+```dart
+// Sign Up
+await FirebaseAuth.instance.createUserWithEmailAndPassword(
+  email: email,
+  password: password,
+);
+
+// Sign In
+await FirebaseAuth.instance.signInWithEmailAndPassword(
+  email: email,
+  password: password,
+);
+
+// Sign Out
+await FirebaseAuth.instance.signOut();
+
+// Monitor Auth State
+FirebaseAuth.instance.authStateChanges().listen((User? user) {
+  // React to authentication state changes
+});
+```
+
+#### 5. Error Handling
+
+The implementation handles various Firebase authentication errors:
+- `weak-password` - Password is too weak
+- `email-already-in-use` - Email already registered
+- `user-not-found` - No account with this email
+- `wrong-password` - Incorrect password
+- `invalid-email` - Email format is invalid
+
+### 📱 User Experience Flow
+
+1. **First-time User:**
+   - Enters email and password
+   - Clicks "Sign Up"
+   - Account created in Firebase
+   - Automatically signed in
+   - User info displayed
+
+2. **Returning User:**
+   - Enters credentials
+   - Clicks "Login"
+   - Authenticated against Firebase
+   - Session established
+   - User info displayed
+
+3. **Signed-in User:**
+   - Views their email and user ID
+   - Can sign out with one click
+   - Returns to login screen
+
+### 🔒 Security Features
+
+- **Password Encryption**: Firebase automatically encrypts passwords
+- **Secure Sessions**: Token-based authentication with automatic refresh
+- **Client-side Validation**: Email format and password length checks
+- **Server-side Validation**: Firebase validates all authentication requests
+- **No Plain-text Storage**: Passwords never stored in plain text
+
+### 📊 Verification Steps
+
+After implementation, verify in Firebase Console:
+1. Navigate to **Firebase Console** → **Authentication** → **Users**
+2. You'll see registered users with:
+   - Email address
+   - User ID (UID)
+   - Sign-in provider (Email/Password)
+   - Creation date
+   - Last sign-in time
+
+### 🎓 Reflection
+
+**How does Firebase simplify authentication management?**
+- Eliminates the need to build and maintain custom authentication servers
+- Provides secure, industry-standard encryption and security practices
+- Handles session management, token refresh, and password recovery automatically
+- Offers built-in protection against common vulnerabilities
+- Scales automatically without infrastructure management
+
+**Security advantages over custom auth systems:**
+- Enterprise-grade security maintained by Google
+- Automatic security updates and patches
+- Protection against brute force attacks
+- Secure token generation and validation
+- No risk of storing passwords incorrectly
+- Built-in email verification and password reset
+
+**Challenges faced:**
+- Understanding asynchronous authentication flow
+- Implementing proper error handling for all edge cases
+- Managing UI state during authentication operations
+- Balancing user experience with security requirements
+- Testing authentication flows without exposing credentials
+
+### 🛠️ Common Issues & Solutions
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `PlatformException (ERROR_INVALID_EMAIL)` | Invalid email format | Validate email pattern before submission |
+| `Password should be at least 6 characters` | Firebase password requirement | Enforce minimum 6 characters client-side |
+| `Firebase not initialized` | Missing Firebase initialization | Add `await Firebase.initializeApp()` in `main()` |
+| `App crashes on sign-in` | Dependency mismatch | Run `flutter pub get` and verify versions |
+| `Email already in use` | Attempting to register existing email | Switch to login mode or use password reset |
+
+### 📸 Screenshots
+
+**Login Screen:**
+- Clean, intuitive interface
+- Email and password input fields
+- Toggle between login/signup modes
+
+**Authenticated Screen:**
+- Success indicator
+- User email display
+- User ID (UID) display
+- Sign out button
+
+**Firebase Console:**
+- Navigate to Authentication → Users
+- View all registered users
+- Monitor sign-in activity
+
+### 🔗 Related Files
+
+```
+lib/
+├── main.dart                      # Firebase initialization & app entry
+├── firebase_options.dart          # Platform-specific Firebase config
+└── screens/
+    └── auth_screen.dart           # Authentication UI & logic
+```
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
-
 - Flutter SDK (latest stable version)
 - Dart SDK
 - Android Studio / VS Code with Flutter extensions
@@ -893,26 +765,22 @@ To test different orientations:
 ### Running the App
 
 1. Clone the repository:
-
 ```bash
 git clone <repository-url>
 cd club_x
 ```
 
 2. Install dependencies:
-
 ```bash
 flutter pub get
 ```
 
 3. Run the app:
-
 ```bash
 flutter run
 ```
 
 4. To test on specific devices:
-
 ```bash
 # List available devices
 flutter devices
@@ -925,653 +793,43 @@ flutter run -d <device-id>
 
 ```
 lib/
-├── main.dart                           # App entry point
-├── firebase_options.dart               # Firebase configuration
+├── main.dart                      # App entry point with Firebase initialization
+├── firebase_options.dart          # Firebase configuration
 └── screens/
-    ├── stateless_stateful_demo.dart    # Stateless vs Stateful Widgets demo
-    ├── widget_tree_demo.dart           # Widget Tree & Reactive UI demonstration
-    ├── responsive_home.dart            # Responsive layout screen
-    └── scrollable_views.dart           # ListView & GridView demonstration
+    ├── auth_screen.dart           # Firebase Authentication (Email/Password)
+    ├── widget_tree_demo.dart      # Widget Tree & Reactive UI demonstration
+    └── responsive_home.dart       # Responsive layout screen
 ```
 
 ### Key Files
 
-- **`main.dart`**: Initializes the app and launches StatelessStatefulDemo
-- **`stateless_stateful_demo.dart`**: Complete demonstration of StatelessWidget and StatefulWidget with multiple interactive examples
-- **`widget_tree_demo.dart`**: Widget tree concepts and reactive UI with setState()
-- **`responsive_home.dart`**: Responsive layout logic for adaptive grid systems
-- **`scrollable_views.dart`**: ListView and GridView implementations with various layouts
-
-## 🔌 Firebase Integration ✅
-
-This project is pre-configured to connect to Firebase for Android, iOS, Web, and desktop via the FlutterFire CLI. Follow these steps to review or re-run the setup.
-
-1. What is Firebase?
-
-- Firebase is a Google cloud platform that provides services like Authentication, Firestore, Cloud Storage, Cloud Functions, Hosting, and Analytics for mobile & web apps.
-
-2. Files created by FlutterFire
-
-- `lib/firebase_options.dart` — Generated platform-specific `FirebaseOptions` used to initialize Firebase.
-- `android/app/google-services.json` — Android config file (placed at `android/app/`).
-- `ios/Runner/GoogleService-Info.plist` — iOS config file (add if supporting iOS).
-
-3. How to initialize Firebase in this app
-
-- Ensure dependency in `pubspec.yaml`:
-
-```yaml
-dependencies:
-  firebase_core: ^3.0.0
-```
-
-- Initialize in `lib/main.dart` (already implemented):
-
-```dart
-WidgetsFlutterBinding.ensureInitialized();
-await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
-);
-```
-
-4. Verify Firebase Connection
-
-- Run the app on an emulator or device:
-
-```bash
-flutter pub get
-flutter run
-```
-
-- Open Firebase Console → Project Settings → Your Apps and confirm your app is listed and active.
-- You can also watch logs in the console for the debug message `Firebase initialized` after startup.
-
-5. Common issues & fixes
-
-- google-services.json not found → Move it to `android/app/`.
-- Plugin not found → Update Gradle & the Google Services plugin in `android/settings.gradle.kts`.
-- Firebase not initialized → Ensure `await Firebase.initializeApp()` is called before `runApp()`.
-- Wrong package name → Confirm `applicationId` / `package_name` matches the Firebase app.
-
-6. README Submission / PR Guidelines
-
-- Commit message:
-
-```
-feat: integrated Firebase SDKs using FlutterFire CLI
-```
-
-- PR title:
-
-```
-[Sprint-2] Firebase SDK Integration with FlutterFire CLI – TeamName
-```
-
-- PR description should include:
-  - Short summary of setup steps and files added/modified
-  - Screenshot(s) showing the app in Firebase Console (Project Settings → Your Apps) and terminal logs from `flutterfire configure`
-  - Short reflection: what was important, errors encountered and fixes, how this prepares the app for Authentication/Firestore
-
----
-
-### 🔬 Demo Screens (new)
-
-This repository now includes two small Firebase demo screens to validate Auth and Firestore integration:
-
-- **Auth Demo** — `lib/screens/auth_demo.dart`
-  - Email/password sign-up and sign-in flows using `firebase_auth`.
-  - Access at route `/auth` (use `goNamed('auth')` or visit the route in the app).
-
-- **Firestore Demo** — `lib/screens/firestore_demo.dart`
-  - Add simple text messages to a `messages` collection and list them using a `StreamBuilder`.
-  - Access at route `/firestore` (use `goNamed('firestore')`).
-
-How to run the demos:
-
-```bash
-flutter pub get
-flutter run -d <device-id>
-# In the running app navigate to /auth or /firestore via the UI or deep link
-```
-
-Include a screenshot or short recording demonstrating sign-up/sign-in or Firestore write/read in your PR.
-
----
+- **`main.dart`**: Initializes Firebase, sets the theme, and launches the AuthScreen
+- **`auth_screen.dart`**: Complete Firebase Authentication implementation with login/signup
+- **`firebase_options.dart`**: Platform-specific Firebase configuration (auto-generated)
+- **`widget_tree_demo.dart`**: Complete implementation of widget tree concepts and reactive UI with setState()
+- **`responsive_home.dart`**: Responsive layout logic for adaptive grid systems (previous sprint)
 
 ## 🎓 Learning Resources
 
-- [Flutter Widget Catalog](https://docs.flutter.dev/development/ui/widgets)
-- [StatefulWidget Class](https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html)
-- [StatelessWidget Class](https://api.flutter.dev/flutter/widgets/StatelessWidget-class.html)
-- [State Management](https://docs.flutter.dev/development/data-and-backend/state-mgmt)
 - [Flutter Layout Documentation](https://docs.flutter.dev/development/ui/layout)
-- [ListView Documentation](https://api.flutter.dev/flutter/widgets/ListView-class.html)
-- [GridView Documentation](https://api.flutter.dev/flutter/widgets/GridView-class.html)
+- [Responsive Design in Flutter](https://docs.flutter.dev/development/ui/layout/responsive-adaptive)
+- [MediaQuery Class Documentation](https://api.flutter.dev/flutter/widgets/MediaQuery-class.html)
+- [LayoutBuilder Class Documentation](https://api.flutter.dev/flutter/widgets/LayoutBuilder-class.html)
 
 ## 👥 Development Sprints
 
-### Sprint #3 - Building Scrollable Views with ListView and GridView ✅ (Current)
-
-- ✅ Created comprehensive demo showing both widget types
-- ✅ Implemented 4+ StatelessWidget examples (headers, cards, greetings, icons)
-- ✅ Implemented 5+ StatefulWidget examples (counter, color changer, toggle, like button, text input)
-- ✅ Added theme switching (Light/Dark mode)
-- ✅ Documented differences and use cases
-- ✅ Created comparison table and visual indicators
-- ✅ Demonstrated setState() in multiple scenarios
-
-## 👥 Development Sprints
-
-### Sprint #3 - Building Scrollable Views with ListView and GridView ✅ (Current)
-
-#### 📖 Understanding ListView and GridView
-
-**ListView** is used for displaying scrollable lists of widgets arranged vertically or horizontally. It's perfect for:
-
-- Lists of items, messages, or notifications
-- Long feeds of content
-- Memory-efficient rendering with `ListView.builder()`
-
-**GridView** is used for displaying scrollable grid layouts, ideal for:
-
-- Image galleries and photo displays
-- Product catalogs and dashboards
-- Dashboard tiles and cards
-
-#### Implementation Overview
-
-**Horizontal ListView with Custom Styling:**
-
-```dart
-ListView.builder(
-  scrollDirection: Axis.horizontal,
-  itemCount: 8,
-  itemBuilder: (context, index) {
-    return Container(
-      width: 150,
-      margin: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.teal[100 * (index + 2)],
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Center(child: Text('Card ${index + 1}')),
-    );
-  },
-)
-```
-
-**Vertical ListView with ListTile:**
-
-```dart
-ListView.builder(
-  itemCount: 10,
-  itemBuilder: (context, index) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.deepPurple,
-        child: Text('${index + 1}'),
-      ),
-      title: Text('Item ${index + 1}'),
-      subtitle: Text('This is item number ${index + 1}'),
-      trailing: Icon(Icons.arrow_forward),
-    );
-  },
-)
-```
-
-**2-Column GridView:**
-
-```dart
-GridView.builder(
-  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 2,
-    crossAxisSpacing: 12,
-    mainAxisSpacing: 12,
-    childAspectRatio: 1.2,
-  ),
-  itemCount: 6,
-  itemBuilder: (context, index) {
-    final colors = [Colors.red, Colors.blue, Colors.green,
-                    Colors.orange, Colors.purple, Colors.pink];
-    return Container(
-      decoration: BoxDecoration(
-        color: colors[index],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Center(child: Text('Tile ${index + 1}')),
-    );
-  },
-)
-```
-
-**3-Column GridView:**
-
-```dart
-GridView.builder(
-  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 3,
-    crossAxisSpacing: 8,
-    mainAxisSpacing: 8,
-  ),
-  itemCount: 9,
-  itemBuilder: (context, index) {
-    return Container(
-      color: Colors.primaries[index % Colors.primaries.length],
-      child: Center(child: Text('${index + 1}')),
-    );
-  },
-)
-```
-
-#### Features Implemented
-
-- ✅ Horizontal ListView with custom styled cards (8 items)
-- ✅ Vertical ListView with ListTile elements (10 items)
-- ✅ GridView with 2-column layout (6 colored tiles)
-- ✅ GridView with 3-column layout (9 numbered tiles)
-- ✅ Custom styling with shadows and border radius
-- ✅ Responsive spacing and padding
-- ✅ SingleChildScrollView for nested scrollable content
-- ✅ Performance optimization with `NeverScrollableScrollPhysics()`
-
-#### Performance Optimization
-
-**Why use builder constructors?**
-
-- Only renders visible items on screen
-- Significantly reduces memory usage
-- Improves performance with large datasets
-- Ideal for dynamic, infinite scrolling lists
-
-**Best Practices Implemented:**
-
-- ✅ Used `ListView.builder()` and `GridView.builder()` for efficient rendering
-- ✅ Set `shrinkWrap: true` for nested scrollable views
-- ✅ Used `NeverScrollableScrollPhysics()` to disable internal scrolling in GridView
-- ✅ Avoided using default constructors with many children
-- ✅ Applied proper spacing and sizing for optimal performance
-
-#### 💡 Key Learnings
-
-**How do ListView and GridView improve UI efficiency?**
-
-- They only render visible widgets, reducing memory consumption by up to 95%
-- Built-in scrolling physics provides smooth, platform-specific scroll behavior
-- Can handle thousands of items without performance degradation
-- Automatic item recycling in builder mode ensures consistent memory usage
-
-**Why is using builder constructors recommended for large data sets?**
-
-- `ListView.builder()` and `GridView.builder()` use a callback that builds items on demand
-- Only visible items are kept in memory at any time
-- Scrolling through 1,000 items uses the same memory as scrolling through 10
-- Essential for infinite scrolling and pagination patterns
-- Enables lazy loading of data from APIs or databases
-
-**What are common performance pitfalls to avoid?**
-
-- ❌ Using `ListView()` constructor with large lists (materializes all items at once)
-- ❌ Not setting `shrinkWrap: true` when nesting inside SingleChildScrollView
-- ❌ Building expensive widgets in itemBuilder without proper optimization
-- ❌ Removing `physics: NeverScrollableScrollPhysics()` on nested scrollables
-- ❌ Using hot-reloading for performance testing (use `flutter run --release`)
-- ❌ Creating new Color or TextStyle objects in itemBuilder (move outside if possible)
-
-#### 🧪 Testing Scrollable Behavior
-
-The implementation has been tested for:
-
-1. ✅ Smooth scrolling performance with 25+ total items
-2. ✅ Proper spacing and alignment in both vertical and horizontal directions
-3. ✅ Layout adaptation to different screen sizes and orientations
-4. ✅ Memory efficiency with builder constructors (no noticeable lag)
-5. ✅ Consistent rendering across Android and iOS platforms
-6. ✅ Proper handling of nested scrollable views
-
-#### 📸 Visual Components
-
-The Scrollable Views demo includes:
-
-- **Horizontal ListView**: Colorful cards with gradient colors (teal shades)
-- **Vertical ListView**: Contact-style items with avatars and descriptions
-- **2-Column GridView**: Colorful tiles (red, blue, green, orange, purple, pink)
-- **3-Column GridView**: Numbered tiles with primary color scheme
-- **Header Sections**: Clear labeled sections with purple background
-- **Custom Styling**: Shadows, rounded corners, and proper spacing throughout
-
----
-
-### Sprint #4 - Handling User Input with Forms ✅ (Current)
-
-#### 📌 Overview
-
-Implemented a dedicated **User Input Form** screen that collects name and email, validates user input, and provides instant feedback with a success SnackBar.
-
-**Route:** `/user-input-form`
-
-#### 🧩 Key Widgets Used
-
-- `TextFormField` for name and email input
-- `Form` with `GlobalKey<FormState>` for validation
-- `ElevatedButton` to submit the form
-- `SnackBar` for feedback upon successful submission
-
-#### ✅ Form Validation Logic
-
-```dart
-TextFormField(
-  controller: _nameController,
-  decoration: const InputDecoration(labelText: 'Name'),
-  validator: (value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Please enter your name';
-    }
-    if (value.trim().length < 2) {
-      return 'Name should be at least 2 characters';
-    }
-    return null;
-  },
-)
-```
-
-```dart
-TextFormField(
-  controller: _emailController,
-  decoration: const InputDecoration(labelText: 'Email'),
-  keyboardType: TextInputType.emailAddress,
-  validator: (value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Please enter your email';
-    }
-    if (!value.contains('@') || !value.contains('.')) {
-      return 'Enter a valid email address';
-    }
-    return null;
-  },
-)
-```
-
-#### 🧪 Submission Feedback
-
-```dart
-if (_formKey.currentState!.validate()) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('Form submitted successfully!')),
-  );
-}
-```
-
-#### 📸 Screenshots
-
-Add screenshots for the following states:
-
-- **Before Input:** `screenshots/user_input_form/before.png`
-- **Validation Errors:** `screenshots/user_input_form/error.png`
-- **Success Submission:** `screenshots/user_input_form/success.png`
-
-Example embed (replace with your actual images):
-
-![Before Input](screenshots/user_input_form/before.png)
-![Validation Errors](screenshots/user_input_form/error.png)
-![Success Submission](screenshots/user_input_form/success.png)
-
-#### ✅ Reflection
-
-**Why is input validation important in mobile apps?**
-
-- It prevents bad data from being submitted and improves data quality.
-- It enhances user trust by providing clear, immediate feedback.
-
-**What’s the difference between TextField and TextFormField?**
-
-- `TextField` is a basic input widget.
-- `TextFormField` integrates with `Form` and supports built-in validation.
-
-**How does form state management simplify validation?**
-
-- A single `FormState` controls validation and reset for all fields.
-- It keeps input logic centralized and easier to maintain.
-
----
-
-### Sprint #5 - Local State Management with setState ✅ (Current)
-
-#### 📌 Overview
-
-Built a dedicated **State Management Demo** screen that uses `setState()` to update a counter, change UI styling when a threshold is reached, and reset state instantly.
-
-**Route:** `/state-management`
-
-#### ✅ setState() in Action
-
-```dart
-void _incrementCounter() {
-  setState(() {
-    _counter++;
-  });
-}
-```
-
-```dart
-AnimatedContainer(
-  duration: const Duration(milliseconds: 300),
-  color: _counter >= 5 ? Colors.greenAccent.shade100 : Colors.white,
-  child: Center(child: Text('$_counter times')),
-)
-```
-
-#### 📸 Screenshots
-
-Add screenshots for the following states:
-
-- **Initial State:** `screenshots/state_management/initial.png`
-- **After Increment:** `screenshots/state_management/after_increment.png`
-- **Goal Reached:** `screenshots/state_management/goal_reached.png`
-
-Example embed (replace with your actual images):
-
-![Initial State](screenshots/state_management/initial.png)
-![After Increment](screenshots/state_management/after_increment.png)
-![Goal Reached](screenshots/state_management/goal_reached.png)
-
-#### ✅ Reflection
-
-**What’s the difference between Stateless and Stateful widgets?**
-
-- Stateless widgets are immutable and don’t store internal state.
-- Stateful widgets store mutable state and rebuild when data changes.
-
-**Why is setState() important for Flutter’s reactive model?**
-
-- It notifies Flutter to rebuild only the widgets affected by state changes.
-- This keeps the UI in sync with user interactions efficiently.
-
-**How can improper use of setState() affect performance?**
-
-- Calling it too often or in large widget trees can cause unnecessary rebuilds.
-- Using it inside `build()` can create infinite rebuild loops.
-
-#### 📸 Screenshots
-
-Below is a snapshot of the Scrollable Views screen showcasing the ListView and GridView sections:
-
-![Scrollable Views Demo](image.png)
-
-#### ✅ Reflection
-
-**How does ListView differ from GridView in design use cases?**
-
-- `ListView` is best for linear content (feeds, messages, contacts) where items flow in one direction.
-- `GridView` is ideal for visual or structured content (galleries, catalogs, dashboards) arranged in rows and columns.
-
-**Why is `ListView.builder()` more efficient for large lists?**
-
-- It builds items lazily on demand, so only visible items are rendered.
-- This keeps memory usage low and improves scroll performance for long lists.
-
-**What can you do to prevent lag or overflow errors in scrollable views?**
-
-- Use builder constructors and avoid large static children lists.
-- Combine `shrinkWrap: true` with `NeverScrollableScrollPhysics()` for nested scrollables.
-- Keep item widgets lightweight and avoid heavy rebuilds inside `itemBuilder`.
-
----
-
-## 🧩 Sprint #3: Creating Reusable Custom Widgets for Modular UI Design
-
-### 📖 Overview
-
-Custom widgets are the cornerstone of scalable Flutter development. By creating reusable components, we reduce code duplication, improve maintainability, and ensure design consistency across the app.
-
-### 🎯 Custom Widgets Implemented
-
-#### 1. CustomButton (Stateless)
-
-A reusable button component with customizable styling:
-
-```dart
-class CustomButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onPressed;
-  final Color backgroundColor;
-  final Color textColor;
-  final double borderRadius;
-
-  // Used in multiple screens with different colors and actions
-}
-```
-
-**Features:**
-
-- Customizable background and text colors
-- Configurable border radius
-- Consistent padding and text styling
-- Reused across multiple screens
-
-#### 2. InfoCard (Stateless)
-
-A card component for displaying information with icons:
-
-```dart
-class InfoCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color iconColor;
-
-  // Creates consistent info displays throughout the app
-}
-```
-
-**Features:**
-
-- Icon-title-subtitle layout
-- Customizable icon color
-- Consistent elevation and border radius
-- Perfect for settings, profiles, and list items
-
-#### 3. LikeButton (Stateful)
-
-An interactive like button with state management:
-
-```dart
-class LikeButton extends StatefulWidget {
-  final VoidCallback? onLike;
-
-  // Maintains liked/unliked state internally
-}
-```
-
-**Features:**
-
-- Toggles between liked and unliked states
-- Visual feedback with color change
-- Optional callback for additional actions
-- Self-contained state management
-
-### 📱 Usage Examples
-
-**Multiple buttons with different styles:**
-
-```dart
-CustomButton(
-  label: 'Primary Action',
-  backgroundColor: Colors.teal,
-  onPressed: () => print('Tapped!'),
-),
-CustomButton(
-  label: 'Secondary',
-  backgroundColor: Colors.orange,
-  onPressed: () => print('Tapped!'),
-),
-```
-
-**Info cards for different purposes:**
-
-```dart
-InfoCard(
-  title: 'Profile',
-  subtitle: 'View account details',
-  icon: Icons.person,
-  iconColor: Colors.blue,
-),
-InfoCard(
-  title: 'Settings',
-  subtitle: 'Customize preferences',
-  icon: Icons.settings,
-  iconColor: Colors.purple,
-),
-```
-
-### ✅ Benefits of Custom Widgets
-
-**Code Reusability:** Write once, use everywhere - reduces duplication and speeds up development.
-
-**Consistency:** Ensures uniform design across the app - buttons look the same, cards have identical styling.
-
-**Maintainability:** Update in one place, changes reflect everywhere - easy to modify and improve.
-
-**Modularity:** Break complex UIs into small, manageable pieces - easier to test and debug.
-
-### 💡 Reflection
-
-**How do reusable widgets improve development efficiency?**
-
-- They eliminate code duplication and reduce time spent on repetitive UI implementation.
-- Teams can build faster by using pre-built components.
-- Updates and bug fixes propagate automatically to all usages.
-
-**What challenges did you face while designing modular components?**
-
-- Balancing flexibility with simplicity - too many parameters make widgets complex.
-- Deciding what should be customizable vs. what should be fixed.
-- Ensuring widgets work well in different contexts and screen sizes.
-
-**How could your team apply this approach to your full project?**
-
-- Create a component library at the start of the project.
-- Document each widget's purpose and customization options.
-- Review and refactor common UI patterns into reusable widgets regularly.
-
----
-
-### Sprint #3 - Reusable Custom Widgets ✅
-
-- ✅ Created modular custom widgets (CustomButton, InfoCard, LikeButton)
-- ✅ Implemented both stateless and stateful custom components
-- ✅ Demonstrated widget reusability across multiple contexts
-- ✅ Added customization options for flexibility
-- ✅ Built dedicated demo screen showcasing all custom widgets
-
-### Sprint #2 - Stateless & Stateful Widgets ✅
-
+### Sprint #3 - Firebase Authentication ✅
+- ✅ Integrated Firebase SDK and initialized Firebase in the app
+- ✅ Implemented Email/Password authentication
+- ✅ Created dual-mode authentication screen (Login/Signup)
+- ✅ Added real-time authentication state monitoring with StreamBuilder
+- ✅ Implemented comprehensive error handling for authentication failures
+- ✅ Added input validation (email format, password length)
+- ✅ Built user information display for authenticated users
+- ✅ Implemented secure sign-out functionality
+- ✅ Documented authentication flow and security features
+
+### Sprint #2 - Widget Tree & Reactive UI Model ✅
 - ✅ Implemented comprehensive widget tree demonstration
 - ✅ Created interactive state management examples with setState()
 - ✅ Built multiple reactive UI components (counter, color picker, visibility toggle, slider)
@@ -1580,75 +838,10 @@ InfoCard(
 - ✅ Included educational dialog explaining reactive UI concepts
 
 ### Sprint #1 - Responsive UI Development ✅
-
 - ✅ Implemented responsive layouts using MediaQuery and LayoutBuilder
 - ✅ Created adaptive grid systems with dynamic column counts
 - ✅ Developed flexible widget hierarchies for various screen sizes
 - ✅ Tested across multiple device types and orientations
-
----
-
-## 🎬 Animations & Transitions (New)
-
-We added an **Animations** demo that demonstrates implicit & explicit animations and a custom page transition. See the `Animations Demo` screen in the app to try these hands-on examples.
-
-### What was implemented
-
-- **Implicit Animation:** `AnimatedOpacity` for fade in/out of a `FlutterLogo`.
-- **Explicit Animation:** `AnimationController` + `RotationTransition` for a continuous rotation demo.
-- **Page Transition:** `PageRouteBuilder` with a combined slide + fade transitions.
-
-### Example snippets
-
-AnimatedOpacity
-
-```dart
-AnimatedOpacity(
-  opacity: visible ? 1.0 : 0.15,
-  duration: Duration(milliseconds: 500),
-  curve: Curves.easeInOut,
-  child: FlutterLogo(size: 120),
-);
-```
-
-Rotation using AnimationController
-
-```dart
-_controller = AnimationController(
-  duration: Duration(seconds: 2),
-  vsync: this,
-)..repeat(reverse: true);
-
-RotationTransition(
-  turns: _controller,
-  child: FlutterLogo(size: 100),
-);
-```
-
-PageRouteBuilder (slide + fade)
-
-```dart
-Navigator.of(context).push(PageRouteBuilder(
-  transitionDuration: Duration(milliseconds: 600),
-  pageBuilder: (_, animation, __) => DetailsPage(),
-  transitionsBuilder: (_, animation, __, child) {
-    final offset = Tween<Offset>(begin: Offset(1, 0), end: Offset.zero)
-        .animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut));
-    final opacity = Tween<double>(begin: 0, end: 1).animate(animation);
-    return SlideTransition(position: offset, child: FadeTransition(opacity: opacity, child: child));
-  },
-));
-```
-
-### README Guidelines for this task
-
-- Add screenshots or a short GIF to `screenshots/animations/` showing:
-  - The fade-in/out AnimatedOpacity state
-  - The rotating logo from the explicit animation
-  - The page transition in action
-- Add a short reflection on why animations improve UX (subtlety, guidance, clarity).
-- Commit message suggestion: `feat: added animations and transitions for improved UX`
-- PR title suggestion: `[Sprint-2] Flutter Animations & Transitions – TeamName`
 
 ---
 
