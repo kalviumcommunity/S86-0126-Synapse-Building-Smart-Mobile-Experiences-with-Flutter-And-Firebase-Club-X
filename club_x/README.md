@@ -1160,7 +1160,602 @@ lib/
 - [MediaQuery Class Documentation](https://api.flutter.dev/flutter/widgets/MediaQuery-class.html)
 - [LayoutBuilder Class Documentation](https://api.flutter.dev/flutter/widgets/LayoutBuilder-class.html)
 
+## �️ Sprint #4: Cloud Firestore Database Design
+
+### 📊 Firestore Data Model Overview
+
+This section documents the complete Cloud Firestore database architecture for Club-X, a Flutter learning platform. The schema is designed for scalability, real-time updates, and efficient querying while maintaining data consistency and logical organization.
+
+---
+
+### 📋 Data Requirements List
+
+Based on the app's features and future scalability needs, the following data entities must be stored:
+
+1. **Users** - Profile information, preferences, and authentication metadata
+2. **User Profiles** - Extended user information including bio, avatar, and settings
+3. **Demo Sessions** - User interactions with different demo screens
+4. **Learning Progress** - Track completion status of tutorials and lessons
+5. **Favorites** - User-saved demos and examples
+6. **Messages** - Real-time chat/messaging for community features
+7. **Activities** - User activity logs for analytics and gamification
+8. **Achievements** - Badges and milestones earned by users
+9. **Feedback** - User feedback on demos and lessons
+10. **Notifications** - In-app notifications for updates and achievements
+
+---
+
+### 🏗️ Firestore Schema Design
+
+#### **Collection: users**
+Stores core user information and authentication metadata.
+
+```
+users/
+ └── {userId} (document)
+       ├── email: string
+       ├── displayName: string
+       ├── photoURL: string (nullable)
+       ├── emailVerified: boolean
+       ├── createdAt: timestamp
+       ├── lastLoginAt: timestamp
+       ├── accountStatus: string (enum: "active", "suspended", "deleted")
+       ├── role: string (enum: "student", "instructor", "admin")
+       └── preferences: map
+             ├── theme: string (enum: "light", "dark", "system")
+             ├── notifications: boolean
+             └── language: string
+```
+
+---
+
+#### **Collection: userProfiles**
+Extended user profile information separate from auth data for better query performance.
+
+```
+userProfiles/
+ └── {userId} (document)
+       ├── bio: string
+       ├── location: string (nullable)
+       ├── learningGoals: array<string>
+       ├── skillLevel: string (enum: "beginner", "intermediate", "advanced")
+       ├── totalPoints: number
+       ├── currentStreak: number
+       ├── longestStreak: number
+       ├── completedDemos: number
+       ├── totalTimeSpent: number (minutes)
+       ├── badges: array<string>
+       ├── updatedAt: timestamp
+       └── socialLinks: map (nullable)
+             ├── github: string
+             ├── linkedin: string
+             └── twitter: string
+```
+
+---
+
+#### **Collection: demoSessions**
+Tracks user interactions with specific demo screens.
+
+```
+demoSessions/
+ └── {sessionId} (document)
+       ├── userId: string (reference to users/{userId})
+       ├── demoType: string (enum: "widget_tree", "responsive", "auth", "firestore", "animation", "state_management")
+       ├── startedAt: timestamp
+       ├── completedAt: timestamp (nullable)
+       ├── duration: number (seconds)
+       ├── interactionCount: number
+       ├── isCompleted: boolean
+       ├── progress: number (0-100 percentage)
+       ├── notes: string (nullable)
+       └── metadata: map
+             ├── deviceType: string
+             ├── screenSize: string
+             └── platform: string
+```
+
+---
+
+#### **Collection: learningProgress**
+Tracks overall learning progress and lesson completion.
+
+```
+learningProgress/
+ └── {progressId} (document)
+       ├── userId: string (reference to users/{userId})
+       ├── lessonId: string
+       ├── lessonTitle: string
+       ├── category: string (enum: "basics", "widgets", "state", "navigation", "firebase", "advanced")
+       ├── status: string (enum: "not_started", "in_progress", "completed")
+       ├── progressPercentage: number (0-100)
+       ├── startedAt: timestamp
+       ├── completedAt: timestamp (nullable)
+       ├── lastAccessedAt: timestamp
+       ├── attempts: number
+       ├── score: number (nullable, for quiz-based lessons)
+       └── checkpoints: array<map>
+             ├── name: string
+             ├── completed: boolean
+             └── completedAt: timestamp
+```
+
+---
+
+#### **Collection: favorites**
+User-saved demos and code examples for quick access.
+
+```
+favorites/
+ └── {favoriteId} (document)
+       ├── userId: string (reference to users/{userId})
+       ├── itemType: string (enum: "demo", "code_snippet", "lesson")
+       ├── itemId: string
+       ├── itemTitle: string
+       ├── description: string
+       ├── tags: array<string>
+       ├── addedAt: timestamp
+       └── notes: string (nullable)
+```
+
+---
+
+#### **Collection: messages**
+Real-time messaging system for community interaction.
+
+```
+messages/
+ └── {messageId} (document)
+       ├── senderId: string (reference to users/{userId})
+       ├── senderName: string
+       ├── senderPhotoURL: string (nullable)
+       ├── text: string
+       ├── createdAt: timestamp
+       ├── editedAt: timestamp (nullable)
+       ├── isEdited: boolean
+       ├── reactions: map (nullable)
+       │     ├── likes: number
+       │     ├── hearts: number
+       │     └── celebrates: number
+       ├── replyTo: string (nullable, reference to messages/{messageId})
+       └── metadata: map
+             ├── platform: string
+             └── appVersion: string
+```
+
+---
+
+#### **Subcollection: users/{userId}/activities**
+Activity logs for individual users (subcollection for better data isolation).
+
+```
+users/
+ └── {userId}/
+       └── activities/ (subcollection)
+             └── {activityId} (document)
+                   ├── action: string (enum: "demo_started", "demo_completed", "badge_earned", "streak_updated", "login")
+                   ├── description: string
+                   ├── timestamp: timestamp
+                   ├── pointsEarned: number
+                   ├── metadata: map (flexible, activity-specific data)
+                   └── isPublic: boolean
+```
+
+---
+
+#### **Subcollection: users/{userId}/achievements**
+User achievements and badges (subcollection for easy querying per user).
+
+```
+users/
+ └── {userId}/
+       └── achievements/ (subcollection)
+             └── {achievementId} (document)
+                   ├── badgeId: string
+                   ├── badgeName: string
+                   ├── badgeIcon: string (URL or asset path)
+                   ├── description: string
+                   ├── category: string (enum: "completion", "streak", "mastery", "social")
+                   ├── earnedAt: timestamp
+                   ├── progress: number (for progressive badges)
+                   ├── maxProgress: number
+                   └── isUnlocked: boolean
+```
+
+---
+
+#### **Subcollection: users/{userId}/notifications**
+User-specific notifications (subcollection for privacy and performance).
+
+```
+users/
+ └── {userId}/
+       └── notifications/ (subcollection)
+             └── {notificationId} (document)
+                   ├── title: string
+                   ├── body: string
+                   ├── type: string (enum: "achievement", "reminder", "update", "social")
+                   ├── createdAt: timestamp
+                   ├── isRead: boolean
+                   ├── readAt: timestamp (nullable)
+                   ├── actionUrl: string (nullable)
+                   ├── icon: string (nullable)
+                   └── priority: string (enum: "low", "medium", "high")
+```
+
+---
+
+#### **Collection: feedback**
+User feedback on demos and lessons for improvement tracking.
+
+```
+feedback/
+ └── {feedbackId} (document)
+       ├── userId: string (reference to users/{userId})
+       ├── userName: string
+       ├── demoType: string
+       ├── rating: number (1-5)
+       ├── comment: string
+       ├── tags: array<string> (e.g., ["helpful", "confusing", "needs-improvement"])
+       ├── createdAt: timestamp
+       ├── status: string (enum: "pending", "reviewed", "resolved")
+       └── adminNotes: string (nullable)
+```
+
+---
+
+### 📄 Sample JSON Documents
+
+#### Sample User Document
+```json
+{
+  "email": "john.doe@example.com",
+  "displayName": "John Doe",
+  "photoURL": "https://example.com/photos/john.jpg",
+  "emailVerified": true,
+  "createdAt": "2026-01-15T10:30:00Z",
+  "lastLoginAt": "2026-02-04T08:45:00Z",
+  "accountStatus": "active",
+  "role": "student",
+  "preferences": {
+    "theme": "dark",
+    "notifications": true,
+    "language": "en"
+  }
+}
+```
+
+#### Sample User Profile Document
+```json
+{
+  "bio": "Flutter enthusiast learning to build beautiful apps",
+  "location": "San Francisco, CA",
+  "learningGoals": ["Master State Management", "Build Production Apps", "Learn Firebase"],
+  "skillLevel": "intermediate",
+  "totalPoints": 1250,
+  "currentStreak": 7,
+  "longestStreak": 14,
+  "completedDemos": 12,
+  "totalTimeSpent": 340,
+  "badges": ["first_demo", "week_warrior", "firebase_fundamentals"],
+  "updatedAt": "2026-02-04T08:45:00Z",
+  "socialLinks": {
+    "github": "johndoe",
+    "linkedin": "john-doe-dev",
+    "twitter": "@johndoeflutter"
+  }
+}
+```
+
+#### Sample Demo Session Document
+```json
+{
+  "userId": "abc123xyz456",
+  "demoType": "widget_tree",
+  "startedAt": "2026-02-04T09:00:00Z",
+  "completedAt": "2026-02-04T09:45:00Z",
+  "duration": 2700,
+  "interactionCount": 45,
+  "isCompleted": true,
+  "progress": 100,
+  "notes": "Great introduction to widget hierarchy!",
+  "metadata": {
+    "deviceType": "mobile",
+    "screenSize": "1080x2340",
+    "platform": "android"
+  }
+}
+```
+
+#### Sample Learning Progress Document
+```json
+{
+  "userId": "abc123xyz456",
+  "lessonId": "firebase_auth_101",
+  "lessonTitle": "Firebase Authentication Basics",
+  "category": "firebase",
+  "status": "completed",
+  "progressPercentage": 100,
+  "startedAt": "2026-02-01T14:00:00Z",
+  "completedAt": "2026-02-03T16:30:00Z",
+  "lastAccessedAt": "2026-02-03T16:30:00Z",
+  "attempts": 2,
+  "score": 95,
+  "checkpoints": [
+    {
+      "name": "Setup Firebase",
+      "completed": true,
+      "completedAt": "2026-02-01T14:30:00Z"
+    },
+    {
+      "name": "Implement Login",
+      "completed": true,
+      "completedAt": "2026-02-02T10:15:00Z"
+    },
+    {
+      "name": "Add Persistent Sessions",
+      "completed": true,
+      "completedAt": "2026-02-03T16:30:00Z"
+    }
+  ]
+}
+```
+
+#### Sample Activity Document (Subcollection)
+```json
+{
+  "action": "badge_earned",
+  "description": "Earned 'Firebase Fundamentals' badge",
+  "timestamp": "2026-02-03T16:30:00Z",
+  "pointsEarned": 100,
+  "metadata": {
+    "badgeId": "firebase_fundamentals",
+    "category": "firebase"
+  },
+  "isPublic": true
+}
+```
+
+#### Sample Message Document
+```json
+{
+  "senderId": "abc123xyz456",
+  "senderName": "John Doe",
+  "senderPhotoURL": "https://example.com/photos/john.jpg",
+  "text": "Just completed the Widget Tree demo! The reactive UI concept is amazing! 🚀",
+  "createdAt": "2026-02-04T10:15:00Z",
+  "editedAt": null,
+  "isEdited": false,
+  "reactions": {
+    "likes": 5,
+    "hearts": 3,
+    "celebrates": 2
+  },
+  "replyTo": null,
+  "metadata": {
+    "platform": "android",
+    "appVersion": "1.0.0"
+  }
+}
+```
+
+---
+
+### 🎨 Visual Schema Diagram
+
+```
+📱 CLUB-X FIRESTORE DATABASE SCHEMA
+══════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          TOP-LEVEL COLLECTIONS                          │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────┐       ┌──────────────────┐       ┌──────────────────┐
+│     users        │       │  userProfiles    │       │  demoSessions    │
+│  (Collection)    │       │   (Collection)   │       │   (Collection)   │
+├──────────────────┤       ├──────────────────┤       ├──────────────────┤
+│ {userId}         │◄──────┤ {userId}         │       │ {sessionId}      │
+│  • email         │       │  • bio           │       │  • userId  ──────┼─┐
+│  • displayName   │       │  • location      │       │  • demoType      │ │
+│  • photoURL      │       │  • learningGoals │       │  • startedAt     │ │
+│  • emailVerified │       │  • skillLevel    │       │  • completedAt   │ │
+│  • createdAt     │       │  • totalPoints   │       │  • duration      │ │
+│  • lastLoginAt   │       │  • currentStreak │       │  • isCompleted   │ │
+│  • accountStatus │       │  • longestStreak │       │  • progress      │ │
+│  • role          │       │  • completedDemos│       │  • metadata      │ │
+│  • preferences{} │       │  • totalTimeSpent│       └──────────────────┘ │
+│                  │       │  • badges[]      │                            │
+│  [SUBCOLLECTIONS]│       │  • updatedAt     │       ┌──────────────────┐ │
+│  ├─ activities/  │       │  • socialLinks{} │       │learningProgress  │ │
+│  ├─ achievements/│       └──────────────────┘       │   (Collection)   │ │
+│  └─notifications/│                                  ├──────────────────┤ │
+└──────────────────┘       ┌──────────────────┐      │ {progressId}     │ │
+                           │    favorites     │      │  • userId  ──────┼─┘
+┌──────────────────┐       │   (Collection)   │      │  • lessonId      │
+│    messages      │       ├──────────────────┤      │  • lessonTitle   │
+│  (Collection)    │       │ {favoriteId}     │      │  • category      │
+├──────────────────┤       │  • userId  ──────┼─┐    │  • status        │
+│ {messageId}      │       │  • itemType      │ │    │  • progressPct   │
+│  • senderId ─────┼─┐     │  • itemId        │ │    │  • startedAt     │
+│  • senderName    │ │     │  • itemTitle     │ │    │  • completedAt   │
+│  • text          │ │     │  • description   │ │    │  • attempts      │
+│  • createdAt     │ │     │  • tags[]        │ │    │  • score         │
+│  • reactions{}   │ │     │  • addedAt       │ │    │  • checkpoints[] │
+│  • replyTo       │ │     └──────────────────┘ │    └──────────────────┘
+│  • metadata{}    │ │                          │
+└──────────────────┘ │     ┌──────────────────┐ │
+                     │     │    feedback      │ │
+                     │     │   (Collection)   │ │
+                     │     ├──────────────────┤ │
+                     │     │ {feedbackId}     │ │
+                     └────►│  • userId        │◄┘
+                           │  • userName      │
+                           │  • demoType      │
+                           │  • rating        │
+                           │  • comment       │
+                           │  • tags[]        │
+                           │  • createdAt     │
+                           │  • status        │
+                           └──────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    SUBCOLLECTIONS (Nested in users)                     │
+└─────────────────────────────────────────────────────────────────────────┘
+
+users/{userId}/
+     │
+     ├─► activities/{activityId}
+     │        • action
+     │        • description
+     │        • timestamp
+     │        • pointsEarned
+     │        • metadata{}
+     │        • isPublic
+     │
+     ├─► achievements/{achievementId}
+     │        • badgeId
+     │        • badgeName
+     │        • badgeIcon
+     │        • description
+     │        • category
+     │        • earnedAt
+     │        • progress
+     │        • isUnlocked
+     │
+     └─► notifications/{notificationId}
+              • title
+              • body
+              • type
+              • createdAt
+              • isRead
+              • readAt
+              • actionUrl
+              • priority
+
+══════════════════════════════════════════════════════════════════════════
+LEGEND:
+  ──► : Reference/Relationship
+  {}  : Map/Object field
+  []  : Array field
+  •   : Document field
+══════════════════════════════════════════════════════════════════════════
+```
+
+---
+
+### ✅ Schema Validation Checklist
+
+- ✅ **Matches app requirements**: Schema covers all identified data needs including users, demos, progress tracking, social features, and analytics
+- ✅ **Scalability**: Designed to handle thousands of users with subcollections for potentially large datasets (activities, achievements, notifications)
+- ✅ **Logical grouping**: Related data is organized cohesively (user auth data separate from profile data, user-specific data in subcollections)
+- ✅ **Subcollections used appropriately**: Activities, achievements, and notifications are subcollections to prevent document size limits and improve query performance
+- ✅ **Consistent naming**: All fields use lowerCamelCase convention throughout the schema
+- ✅ **Clear data types**: Every field has explicit type definition (string, number, boolean, array, map, timestamp)
+- ✅ **Developer-friendly**: Schema is well-documented with clear examples and logical structure
+- ✅ **Performance optimized**: Frequently queried data (userProfiles) is separated from auth data for better read performance
+- ✅ **Real-time ready**: Structure supports real-time listeners for messages, notifications, and activity feeds
+- ✅ **Privacy-conscious**: User-specific sensitive data (notifications, activities) stored in subcollections for better security rules
+
+---
+
+### 💭 Design Reflection
+
+#### Why This Structure?
+
+**1. Separation of Concerns**
+- **users** collection stores authentication-related data that changes infrequently
+- **userProfiles** collection holds extended profile data that may be updated more often
+- This separation improves query performance and reduces unnecessary data reads when only basic user info is needed
+
+**2. Subcollections for User-Specific Data**
+- **activities**, **achievements**, and **notifications** are subcollections under users to:
+  - Prevent document size limits (Firestore has 1MB limit per document)
+  - Enable efficient pagination for potentially large datasets
+  - Improve security (easier to write rules for user-owned data)
+  - Allow real-time listeners on specific user data without loading all users
+
+**3. Top-Level Collections for Shared Data**
+- **messages**, **demoSessions**, **learningProgress**, and **feedback** are top-level because:
+  - They need to be queried across multiple users (leaderboards, community feeds)
+  - They require complex filtering and sorting
+  - They represent app-wide shared resources
+
+**4. Denormalization Strategy**
+- User names and photos are duplicated in messages to avoid extra reads
+- Lesson titles are stored in learningProgress for quick display without additional queries
+- This follows NoSQL best practices: optimize for reads, accept some data duplication
+
+#### Performance and Scalability Benefits
+
+**1. Query Efficiency**
+- Indexed fields (userId, demoType, status) enable fast filtering
+- Timestamps support efficient ordering and time-based queries
+- Shallow document structure (no deeply nested objects) improves read/write speed
+
+**2. Real-Time Updates**
+- Message collection supports instant community chat updates
+- Notification subcollection enables live notification badges
+- Activity feeds can stream real-time updates without heavy queries
+
+**3. Cost Optimization**
+- Separating frequently accessed data (userProfiles) from infrequent data (full user activities) reduces read costs
+- Subcollections allow fetching only needed user data instead of entire user documents
+- Field-level queries minimize bandwidth usage
+
+**4. Horizontal Scaling**
+- Document-per-user architecture scales linearly with user growth
+- Collection sharding is possible for high-traffic collections (messages, demoSessions)
+- Subcollections distribute data naturally across Firestore's distributed architecture
+
+#### Challenges Faced
+
+**1. Balancing Normalization vs. Denormalization**
+- **Challenge**: Deciding when to store references vs. duplicate data
+- **Solution**: Duplicated frequently read, rarely updated data (user names, demo titles); used references for data that changes often or requires consistency
+
+**2. Determining Collection vs. Subcollection**
+- **Challenge**: Deciding whether activities/achievements should be top-level or nested
+- **Solution**: Chose subcollections because:
+  - Data is always accessed in user context
+  - Security rules are simpler
+  - Prevents unlimited growth of top-level collection
+
+**3. Handling Relationships**
+- **Challenge**: Firestore has no JOIN operations
+- **Solution**: Stored critical relationship data (userId references) with denormalized display fields to minimize reads
+
+**4. Future-Proofing the Schema**
+- **Challenge**: Designing for unknown future features
+- **Solution**: Used flexible metadata maps, enum-like strings for types, and modular collection design that allows easy extension
+
+**5. Managing Document Size Limits**
+- **Challenge**: Firestore's 1MB document limit
+- **Solution**: Arrays are limited in size (checkpoints, learningGoals), and large datasets (activities) use subcollections
+
+#### Next Steps
+
+With this schema in place, the next sprint will focus on:
+1. Implementing CRUD operations for each collection
+2. Setting up Firestore Security Rules to protect user data
+3. Creating data access layers and repository patterns
+4. Building real-time listeners for live updates
+5. Implementing offline persistence and caching strategies
+
+---
+
 ## 👥 Development Sprints
+
+### Sprint #4 - Cloud Firestore Database Design ✅
+- ✅ Analyzed app requirements and identified data entities
+- ✅ Designed comprehensive Firestore schema with 10+ collections
+- ✅ Implemented logical data organization with collections and subcollections
+- ✅ Created sample JSON documents for all major collections
+- ✅ Developed visual schema diagram showing relationships
+- ✅ Established naming conventions (lowerCamelCase) and data types
+- ✅ Optimized schema for scalability and query performance
+- ✅ Documented design decisions and reflection
+- ✅ Validated schema against best practices checklist
 
 ### Sprint #3 - Complete Authentication Flow with Persistent Sessions ✅
 - ✅ Integrated Firebase SDK and initialized Firebase before app startup
