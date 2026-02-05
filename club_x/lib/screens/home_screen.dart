@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firestore_read_demo.dart';
+<<<<<<< feat/firestore-queries-filters-ordering
 import 'product_filtering_demo.dart';
 import 'task_query_demo.dart';
 import 'user_search_demo.dart';
+=======
+import 'realtime_sync_demo.dart';
+import 'realtime_document_sync.dart';
+>>>>>>> main
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -199,7 +204,11 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+<<<<<<< feat/firestore-queries-filters-ordering
               // Product Filtering Demo Button
+=======
+              // Real-Time Collection Sync Demo Button
+>>>>>>> main
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -207,6 +216,7 @@ class HomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
+<<<<<<< feat/firestore-queries-filters-ordering
                         builder: (context) => const ProductFilteringDemo(),
                       ),
                     );
@@ -239,6 +249,14 @@ class HomeScreen extends StatelessWidget {
                   },
                   icon: const Icon(Icons.assignment),
                   label: const Text('Advanced Task Queries'),
+=======
+                        builder: (context) => const RealtimeSyncDemo(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.update),
+                  label: const Text('Real-Time Task Sync'),
+>>>>>>> main
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40,
@@ -251,7 +269,11 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+<<<<<<< feat/firestore-queries-filters-ordering
               // User Search Demo Button
+=======
+              // Real-Time Document Sync Demo Button
+>>>>>>> main
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -259,12 +281,21 @@ class HomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
+<<<<<<< feat/firestore-queries-filters-ordering
                         builder: (context) => const UserSearchDemo(),
                       ),
                     );
                   },
                   icon: const Icon(Icons.person_search),
                   label: const Text('User Search & Filters'),
+=======
+                        builder: (context) => const RealtimeDocumentSync(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.person_outline),
+                  label: const Text('Real-Time User Profile'),
+>>>>>>> main
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40,
