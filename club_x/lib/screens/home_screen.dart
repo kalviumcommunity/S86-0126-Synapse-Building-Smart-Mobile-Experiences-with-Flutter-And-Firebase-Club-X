@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firestore_read_demo.dart';
+import 'realtime_sync_demo.dart';
+import 'realtime_document_sync.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -190,6 +192,58 @@ class HomeScreen extends StatelessWidget {
                       vertical: 16,
                     ),
                     backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    textStyle: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Real-Time Collection Sync Demo Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RealtimeSyncDemo(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.update),
+                  label: const Text('Real-Time Task Sync'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 16,
+                    ),
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    textStyle: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Real-Time Document Sync Demo Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RealtimeDocumentSync(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.person_outline),
+                  label: const Text('Real-Time User Profile'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 16,
+                    ),
+                    backgroundColor: Colors.purple,
                     foregroundColor: Colors.white,
                     textStyle: const TextStyle(fontSize: 16),
                   ),
