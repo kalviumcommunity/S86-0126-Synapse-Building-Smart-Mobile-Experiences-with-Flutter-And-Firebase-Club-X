@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firestore_read_demo.dart';
-<<<<<<< feat/firestore-queries-filters-ordering
+import 'firebase_storage_upload_demo.dart';
+import 'media_gallery_demo.dart';
 import 'product_filtering_demo.dart';
 import 'task_query_demo.dart';
 import 'user_search_demo.dart';
-=======
 import 'realtime_sync_demo.dart';
 import 'realtime_document_sync.dart';
->>>>>>> main
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,7 +15,6 @@ class HomeScreen extends StatelessWidget {
   Future<void> _handleLogout(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
-      // No need for navigation - authStateChanges() handles it automatically
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -54,284 +52,167 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.check_circle_outline,
-                color: Colors.green,
-                size: 100,
-              ),
-              const SizedBox(height: 30),
-              const Text(
-                'You are logged in!',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              children: [
+                const Icon(Icons.check_circle_outline,
+                    color: Colors.green, size: 100),
+                const SizedBox(height: 30),
+                const Text(
+                  'You are logged in!',
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 ),
-              ),
-              const SizedBox(height: 40),
-              Card(
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'User Information:',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                const SizedBox(height: 40),
+
+                /// USER INFO CARD
+                Card(
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('User Information:',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        const Divider(height: 20),
+
+                        _infoRow(Icons.email, 'Email', user?.email ?? 'N/A'),
+                        _infoRow(Icons.fingerprint, 'User ID', user?.uid ?? 'N/A'),
+                        _infoRow(
+                          Icons.verified_user,
+                          'Email Verified',
+                          user?.emailVerified == true ? 'Yes' : 'No',
+                          valueColor: user?.emailVerified == true
+                              ? Colors.green
+                              : Colors.orange,
                         ),
-                      ),
-                      const Divider(height: 20),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          const Icon(Icons.email, color: Colors.blue),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Email',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                Text(
-                                  user?.email ?? 'N/A',
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          const Icon(Icons.fingerprint, color: Colors.orange),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'User ID',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                Text(
-                                  user?.uid ?? 'N/A',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'monospace',
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          const Icon(Icons.verified_user, color: Colors.green),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Email Verified',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                Text(
-                                  user?.emailVerified == true ? 'Yes' : 'No',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: user?.emailVerified == true
-                                        ? Colors.green
-                                        : Colors.orange,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 40),
-              // Firestore Read Demo Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const FirestoreReadDemo(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.cloud_outlined),
-                  label: const Text('Firestore Read Demo'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 16,
+                      ],
                     ),
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    textStyle: const TextStyle(fontSize: 16),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-<<<<<<< feat/firestore-queries-filters-ordering
-              // Product Filtering Demo Button
-=======
-              // Real-Time Collection Sync Demo Button
->>>>>>> main
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-<<<<<<< feat/firestore-queries-filters-ordering
-                        builder: (context) => const ProductFilteringDemo(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.filter_list),
-                  label: const Text('Product Filtering & Sorting'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 16,
-                    ),
-                    backgroundColor: Colors.teal,
-                    foregroundColor: Colors.white,
-                    textStyle: const TextStyle(fontSize: 16),
-                  ),
+
+                const SizedBox(height: 40),
+
+                _navButton(
+                    context,
+                    Icons.cloud_outlined,
+                    'Firestore Read Demo',
+                    const FirestoreReadDemo(),
+                    Colors.blue),
+
+                _navButton(
+                    context,
+                    Icons.upload_file,
+                    'Firebase Storage Upload',
+                    const FirebaseStorageUploadDemo(),
+                    Colors.orange),
+
+                _navButton(
+                    context,
+                    Icons.collections,
+                    'Media Gallery',
+                    const MediaGalleryDemo(),
+                    Colors.green),
+
+                _navButton(
+                    context,
+                    Icons.filter_list,
+                    'Product Filtering & Sorting',
+                    const ProductFilteringDemo(),
+                    Colors.teal),
+
+                _navButton(
+                    context,
+                    Icons.assignment,
+                    'Advanced Task Queries',
+                    const TaskQueryDemo(),
+                    Colors.blueGrey),
+
+                _navButton(
+                    context,
+                    Icons.person_search,
+                    'User Search & Filters',
+                    const UserSearchDemo(),
+                    Colors.purple),
+
+                _navButton(
+                    context,
+                    Icons.update,
+                    'Real-Time Task Sync',
+                    const RealtimeSyncDemo(),
+                    Colors.indigo),
+
+                _navButton(
+                    context,
+                    Icons.person_outline,
+                    'Real-Time User Profile',
+                    const RealtimeDocumentSync(),
+                    Colors.redAccent),
+
+                const SizedBox(height: 20),
+
+                ElevatedButton.icon(
+                  onPressed: () => _handleLogout(context),
+                  icon: const Icon(Icons.logout),
+                  label: const Text('Sign Out'),
                 ),
-              ),
-              const SizedBox(height: 20),
-              // Task Query Demo Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const TaskQueryDemo(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.assignment),
-                  label: const Text('Advanced Task Queries'),
-=======
-                        builder: (context) => const RealtimeSyncDemo(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.update),
-                  label: const Text('Real-Time Task Sync'),
->>>>>>> main
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 16,
-                    ),
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    textStyle: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-<<<<<<< feat/firestore-queries-filters-ordering
-              // User Search Demo Button
-=======
-              // Real-Time Document Sync Demo Button
->>>>>>> main
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-<<<<<<< feat/firestore-queries-filters-ordering
-                        builder: (context) => const UserSearchDemo(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.person_search),
-                  label: const Text('User Search & Filters'),
-=======
-                        builder: (context) => const RealtimeDocumentSync(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.person_outline),
-                  label: const Text('Real-Time User Profile'),
->>>>>>> main
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 16,
-                    ),
-                    backgroundColor: Colors.purple,
-                    foregroundColor: Colors.white,
-                    textStyle: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: () => _handleLogout(context),
-                icon: const Icon(Icons.logout),
-                label: const Text('Sign Out'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 16,
-                  ),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Colors.white,
-                  textStyle: const TextStyle(fontSize: 16),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Tap the logout icon in the app bar or button above to sign out',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// USER INFO ROW WIDGET
+  Widget _infoRow(IconData icon, String label, String value,
+      {Color valueColor = Colors.black}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.blue),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                Text(value,
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: valueColor,
+                        fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// NAVIGATION BUTTON WIDGET
+  Widget _navButton(BuildContext context, IconData icon, String text,
+      Widget page, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: () => Navigator.push(
+              context, MaterialPageRoute(builder: (context) => page)),
+          icon: Icon(icon),
+          label: Text(text),
+          style: ElevatedButton.styleFrom(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+            backgroundColor: color,
+            foregroundColor: Colors.white,
+            textStyle: const TextStyle(fontSize: 16),
           ),
         ),
       ),
