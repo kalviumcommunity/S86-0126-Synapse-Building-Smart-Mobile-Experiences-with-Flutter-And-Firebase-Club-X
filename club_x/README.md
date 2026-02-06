@@ -2346,3 +2346,637 @@ With Firestore read operations mastered, upcoming sprints will cover:
 
 ---
 
+## 📲 Sprint #3.38: Handling Push Notifications Using Firebase Cloud Messaging
+
+### 📖 Concept Overview
+
+Push notifications are a core feature of modern mobile applications, enabling real-time communication with users even when the app is not actively running. Firebase Cloud Messaging (FCM) provides a reliable, scalable, and cross-platform solution for sending notifications to Android, iOS, and web applications.
+
+FCM works by assigning each device a unique registration token. When you send a notification, FCM delivers it to the device using this token. The notification can be received in three different app states:
+1. **Foreground** - App is open and active
+2. **Background** - App is minimized but running
+3. **Terminated** - App is completely closed
+
+### 🎯 Why Push Notifications Are Important
+
+Push notifications are essential for:
+- ✅ **Real-time Communication** - Instant alerts, updates, and reminders
+- ✅ **User Engagement** - Keep users informed and coming back to your app
+- ✅ **Retention** - Re-engage inactive users with timely notifications
+- ✅ **Critical Functionality** - Chat messages, order tracking, workflow updates
+- ✅ **Background Operations** - Works even when app is not running
+- ✅ **Personalization** - Targeted messages based on user behavior
+- ✅ **Action-driven** - Users can tap to navigate directly to relevant content
+
+**Use Cases:**
+- 💬 Chat applications - New message alerts
+- 🛒 E-commerce - Order confirmations, delivery updates
+- 📰 News apps - Breaking news notifications
+- 📅 Calendar apps - Event reminders
+- 🏋️ Fitness apps - Workout reminders, achievement unlocks
+- 💰 Financial apps - Transaction alerts, bill reminders
+
+### 🔧 Firebase Cloud Messaging Setup
+
+#### Step 1: Add Dependencies
+
+Add to `pubspec.yaml`:
+```yaml
+dependencies:
+  firebase_core: ^3.6.0
+  firebase_messaging: ^15.1.3
+```
+
+Run:
+```bash
+flutter pub get
+```
+
+#### Step 2: Initialize Firebase
+
+Ensure Firebase is initialized before running the app:
+
+```dart
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const MyApp());
+}
+```
+
+#### Step 3: Request Notification Permissions
+
+iOS requires explicit permission request, Android 13+ also requires permission:
+
+```dart
+final messaging = FirebaseMessaging.instance;
+
+// Request permission for iOS and Android 13+
+NotificationSettings settings = await messaging.requestPermission(
+  alert: true,
+  announcement: false,
+  badge: true,
+  carPlay: false,
+  criticalAlert: false,
+  provisional: false,
+  sound: true,
+);
+
+print('User granted permission: ${settings.authorizationStatus}');
+```
+
+**Authorization Status Values:**
+- `authorized` - User granted permission
+- `denied` - User denied permission
+- `notDetermined` - User hasn't responded yet
+- `provisional` - Temporary silent notifications (iOS)
+
+#### Step 4: Get Device FCM Token
+
+Each device has a unique token for sending targeted notifications:
+
+```dart
+String? token = await FirebaseMessaging.instance.getToken();
+print("FCM Device Token: $token");
+
+// Store this token in Firestore or your backend to send notifications later
+```
+
+**Important:** 
+- Token can change over time (app reinstall, device restore)
+- Listen for token refresh events:
+
+```dart
+FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+  print("Token refreshed: $newToken");
+  // Update token in your backend
+});
+```
+
+### 📥 Receiving Notifications
+
+#### 1. Foreground Notifications
+
+Handle messages when app is open and visible:
+
+```dart
+FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  print('Foreground message received!');
+  print('Title: ${message.notification?.title}');
+  print('Body: ${message.notification?.body}');
+  print('Data: ${message.data}');
+  
+  // Show in-app notification or update UI
+  if (message.notification != null) {
+    _showInAppNotification(
+      message.notification!.title ?? 'New Message',
+      message.notification!.body ?? '',
+    );
+  }
+});
+```
+
+**Note:** iOS shows notifications automatically in foreground, but Android doesn't. You need to display a local notification or custom UI element.
+
+#### 2. Background & App-Opened Notifications
+
+Handle notification taps when app is in background:
+
+```dart
+FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+  print('Notification tapped! App opened from background.');
+  print('Message data: ${message.data}');
+  
+  // Navigate to specific screen based on notification data
+  if (message.data['screen'] == 'chat') {
+    Navigator.pushNamed(context, '/chat', arguments: message.data);
+  }
+});
+```
+
+#### 3. Terminated State Notifications
+
+Check if app was launched by tapping a notification:
+
+```dart
+Future<void> setupInteractedMessage() async {
+  // Get any message that caused the app to open from terminated state
+  RemoteMessage? initialMessage = 
+      await FirebaseMessaging.instance.getInitialMessage();
+  
+  if (initialMessage != null) {
+    print('App opened from terminated state via notification');
+    _handleMessage(initialMessage);
+  }
+}
+```
+
+Call this in your `main()` or app initialization:
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  
+  // Check for notification that opened the app
+  await setupInteractedMessage();
+  
+  runApp(const MyApp());
+}
+```
+
+### 🎨 Complete NotificationService Implementation
+
+Here's a comprehensive notification service class:
+
+```dart
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+
+class NotificationService {
+  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  
+  // Singleton pattern
+  static final NotificationService _instance = NotificationService._internal();
+  factory NotificationService() => _instance;
+  NotificationService._internal();
+  
+  /// Initialize FCM and set up listeners
+  Future<void> initialize() async {
+    // Request permissions
+    NotificationSettings settings = await _messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+      
+      // Get FCM token
+      String? token = await _messaging.getToken();
+      print('FCM Token: $token');
+      
+      // TODO: Send token to your backend server
+      
+      // Listen for token refresh
+      _messaging.onTokenRefresh.listen(_onTokenRefresh);
+      
+      // Handle foreground messages
+      FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+      
+      // Handle notification tap when app is in background
+      FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundMessage);
+      
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+  
+  /// Handle foreground messages
+  void _handleForegroundMessage(RemoteMessage message) {
+    print('Foreground message: ${message.notification?.title}');
+    
+    // Show custom in-app notification
+    // You can use packages like flutter_local_notifications
+    // or display a custom SnackBar/Dialog
+  }
+  
+  /// Handle notification tap from background
+  void _handleBackgroundMessage(RemoteMessage message) {
+    print('Background message opened: ${message.messageId}');
+    
+    // Navigate based on notification data
+    if (message.data['type'] == 'chat') {
+      // Navigate to chat screen
+    } else if (message.data['type'] == 'order') {
+      // Navigate to order details
+    }
+  }
+  
+  /// Handle token refresh
+  void _onTokenRefresh(String newToken) {
+    print('Token refreshed: $newToken');
+    // TODO: Update token in your backend
+  }
+  
+  /// Get current FCM token
+  Future<String?> getToken() async {
+    return await _messaging.getToken();
+  }
+  
+  /// Subscribe to a topic
+  Future<void> subscribeToTopic(String topic) async {
+    await _messaging.subscribeToTopic(topic);
+    print('Subscribed to topic: $topic');
+  }
+  
+  /// Unsubscribe from a topic
+  Future<void> unsubscribeFromTopic(String topic) async {
+    await _messaging.unsubscribeFromTopic(topic);
+    print('Unsubscribed from topic: $topic');
+  }
+}
+```
+
+**Usage in your app:**
+
+```dart
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize notifications
+    NotificationService().initialize();
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: HomeScreen(),
+    );
+  }
+}
+```
+
+### 📤 Sending Test Notifications
+
+#### Method 1: Firebase Console (Easiest)
+
+1. Go to **Firebase Console** → **Cloud Messaging**
+2. Click **"Send your first message"**
+3. Enter notification details:
+   - **Title**: "Welcome to Club-X!"
+   - **Body**: "Thanks for enabling notifications!"
+4. Click **"Send test message"**
+5. Paste your FCM token
+6. Click **"Test"**
+
+#### Method 2: Using REST API
+
+Send POST request to FCM API:
+
+```bash
+curl -X POST https://fcm.googleapis.com/fcm/send \
+  -H "Authorization: key=YOUR_SERVER_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to": "DEVICE_FCM_TOKEN",
+    "notification": {
+      "title": "Hello from Club-X!",
+      "body": "This is a test notification",
+      "sound": "default"
+    },
+    "data": {
+      "screen": "home",
+      "user_id": "123"
+    }
+  }'
+```
+
+#### Method 3: Using Cloud Functions
+
+```javascript
+const admin = require('firebase-admin');
+
+exports.sendWelcomeNotification = functions.auth.user().onCreate((user) => {
+  const message = {
+    notification: {
+      title: 'Welcome to Club-X!',
+      body: `Hi ${user.displayName}, thanks for joining!`
+    },
+    token: userFCMToken // Retrieved from Firestore
+  };
+  
+  return admin.messaging().send(message);
+});
+```
+
+### 📱 Platform-Specific Configuration
+
+#### Android Setup
+
+1. **Add google-services.json** to `android/app/`
+
+2. **Update AndroidManifest.xml** (`android/app/src/main/AndroidManifest.xml`):
+
+```xml
+<manifest>
+  <application>
+    <!-- Add notification icon -->
+    <meta-data
+      android:name="com.google.firebase.messaging.default_notification_icon"
+      android:resource="@drawable/ic_notification" />
+    
+    <!-- Add notification color -->
+    <meta-data
+      android:name="com.google.firebase.messaging.default_notification_color"
+      android:resource="@color/notification_color" />
+  </application>
+  
+  <!-- Permission for Android 13+ -->
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+</manifest>
+```
+
+#### iOS Setup
+
+1. **Add GoogleService-Info.plist** to `ios/Runner/`
+
+2. **Enable capabilities** in Xcode:
+   - Open `ios/Runner.xcworkspace`
+   - Select Runner → Signing & Capabilities
+   - Add "Push Notifications" capability
+   - Add "Background Modes" → Check "Remote notifications"
+
+3. **Update Info.plist** (`ios/Runner/Info.plist`):
+
+```xml
+<key>UIBackgroundModes</key>
+<array>
+  <string>fetch</string>
+  <string>remote-notification</string>
+</array>
+```
+
+4. **Configure APNs** (Apple Push Notification service):
+   - Go to Apple Developer Portal
+   - Create APNs Key
+   - Upload to Firebase Console → Project Settings → Cloud Messaging
+
+### 🎯 Notification Payload Structure
+
+**Notification-only message:**
+```json
+{
+  "notification": {
+    "title": "New Message",
+    "body": "You have 3 unread messages",
+    "image": "https://example.com/image.png"
+  }
+}
+```
+
+**Data-only message (for background processing):**
+```json
+{
+  "data": {
+    "type": "chat",
+    "chat_id": "123",
+    "sender": "Alice",
+    "message": "Hello!"
+  }
+}
+```
+
+**Combined message:**
+```json
+{
+  "notification": {
+    "title": "New Order",
+    "body": "Your order #1234 has shipped"
+  },
+  "data": {
+    "screen": "order_details",
+    "order_id": "1234",
+    "status": "shipped"
+  }
+}
+```
+
+### 🔔 Topic-Based Messaging
+
+Send notifications to groups of users subscribed to topics:
+
+**Subscribe to topics:**
+```dart
+// Subscribe to "news" topic
+await FirebaseMessaging.instance.subscribeToTopic('news');
+
+// Subscribe to "sports" topic
+await FirebaseMessaging.instance.subscribeToTopic('sports');
+```
+
+**Send to topic (from backend):**
+```dart
+await admin.messaging().sendToTopic('news', {
+  notification: {
+    title: 'Breaking News',
+    body: 'Important update for all users'
+  }
+});
+```
+
+### ⚠️ Common Issues and Fixes
+
+#### Issue 1: Missing GoogleService-Info.plist (iOS)
+**Solution:** Download from Firebase Console → Project Settings → iOS app
+
+#### Issue 2: Missing google-services.json (Android)
+**Solution:** Download from Firebase Console → Project Settings → Android app
+
+#### Issue 3: FCM not enabled
+**Solution:** Firebase Console → Cloud Messaging → Enable API
+
+#### Issue 4: iOS notifications not working
+**Solution:** 
+- Verify APNs key is uploaded to Firebase
+- Check Push Notifications capability is enabled
+- Ensure device is registered for remote notifications
+
+#### Issue 5: Android 13+ notifications not showing
+**Solution:** Request POST_NOTIFICATIONS permission explicitly:
+```dart
+await Permission.notification.request();
+```
+
+#### Issue 6: Background handler not working
+**Solution:** Define handler at top level (outside classes):
+```dart
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Background message: ${message.messageId}");
+}
+
+void main() {
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  runApp(MyApp());
+}
+```
+
+### 📊 Best Practices
+
+#### 1. Handle All App States
+Always implement handlers for foreground, background, and terminated states.
+
+#### 2. Store Tokens Securely
+Save FCM tokens in Firestore with user ID:
+```dart
+await FirebaseFirestore.instance
+    .collection('users')
+    .doc(userId)
+    .update({'fcmToken': token});
+```
+
+#### 3. Implement Token Refresh
+Tokens can expire or change, always listen for updates.
+
+#### 4. Use Data Messages for Background Processing
+Data-only messages can trigger background work without showing notifications.
+
+#### 5. Respect User Preferences
+Allow users to opt-out of certain notification types.
+
+#### 6. Test on Real Devices
+Emulators have limited push notification support.
+
+#### 7. Handle Notification Actions
+Respond appropriately when users tap notifications.
+
+### 📸 Screenshots
+
+#### Firebase Console - Cloud Messaging
+![Firebase Console](assets/screenshots/fcm_console.png)
+*Sending test notification from Firebase Console*
+
+#### iOS Permission Request
+![iOS Permission](assets/screenshots/ios_notification_permission.png)
+*Native iOS notification permission dialog*
+
+#### Foreground Notification
+![Foreground](assets/screenshots/foreground_notification.png)
+*In-app notification display when app is active*
+
+#### Background Notification
+![Background](assets/screenshots/background_notification.png)
+*System notification when app is in background*
+
+### 🧪 Testing Checklist
+
+- [ ] Permissions requested successfully
+- [ ] FCM token retrieved and logged
+- [ ] Foreground notifications display correctly
+- [ ] Background notifications appear in system tray
+- [ ] Tapping notification opens correct screen
+- [ ] App opens from terminated state via notification
+- [ ] Token refresh handler works
+- [ ] Topic subscription/unsubscription works
+- [ ] Tested on both iOS and Android
+- [ ] Tested on real devices (not just emulators)
+
+### 💡 Real-World Implementation Tips
+
+**Selective Notifications:**
+```dart
+class NotificationPreferences {
+  bool chatMessages = true;
+  bool orderUpdates = true;
+  bool promotions = false;
+  bool systemAlerts = true;
+  
+  Future<void> updateTopicSubscriptions() async {
+    if (chatMessages) {
+      await FirebaseMessaging.instance.subscribeToTopic('chat');
+    } else {
+      await FirebaseMessaging.instance.unsubscribeFromTopic('chat');
+    }
+    // Repeat for other topics...
+  }
+}
+```
+
+**Rich Notifications:**
+```dart
+// Send notification with image
+{
+  "notification": {
+    "title": "New Product",
+    "body": "Check out our latest item!",
+    "image": "https://example.com/product.jpg"
+  }
+}
+```
+
+**Action Buttons (Android):**
+```dart
+// Custom notification with actions
+{
+  "data": {
+    "actions": "[{\"action\":\"reply\",\"title\":\"Reply\"},{\"action\":\"dismiss\",\"title\":\"Dismiss\"}]"
+  }
+}
+```
+
+### 📚 Additional Resources
+
+- [FlutterFire Messaging Documentation](https://firebase.flutter.dev/docs/messaging/overview)
+- [Firebase Cloud Messaging Official Docs](https://firebase.google.com/docs/cloud-messaging)
+- [Flutter Background Message Handling](https://firebase.flutter.dev/docs/messaging/usage#background-messages)
+- [Android Notification Permission (API 33+)](https://developer.android.com/develop/ui/views/notifications/notification-permission)
+- [iOS Push Notification Setup](https://firebase.google.com/docs/cloud-messaging/ios/client)
+- [FCM HTTP v1 API](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages)
+
+### 🎓 Key Takeaways
+
+1. **Three App States**: Handle foreground, background, and terminated states separately
+2. **Permissions First**: Always request notification permissions before use
+3. **Token Management**: Store and update FCM tokens in your backend
+4. **Platform Differences**: iOS requires APNs configuration, Android has different behaviors per version
+5. **User Experience**: Don't spam users - make notifications valuable and actionable
+6. **Testing**: Use Firebase Console for easy testing during development
+7. **Topics**: Use topic-based messaging for group notifications
+8. **Data Payload**: Include navigation data to route users to relevant screens
+
+---
+
