@@ -17,6 +17,9 @@ import 'realtime_document_sync.dart';
 import 'firebase_storage_upload_demo.dart';
 import 'media_gallery_demo.dart';
 
+// CRUD Demo
+import 'crud_demo_screen.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -101,6 +104,13 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 30),
 
             /// DEMO BUTTONS
+            _navButton(
+              context,
+              icon: Icons.create,
+              label: 'Complete CRUD Demo',
+              color: Colors.deepPurple,
+              page: const CrudDemoScreen(),
+            ),
             _navButton(
               context,
               icon: Icons.cloud_outlined,

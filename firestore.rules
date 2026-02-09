@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ==========================================
+    // CRUD DEMO - User-Specific Items
+    // ==========================================
+    // Each user can only access their own items
+    // Path: /users/{uid}/items/{itemId}
+    match /users/{uid}/items/{itemId} {
+      // Allow read and write only if:
+      // 1. User is authenticated (request.auth != null)
+      // 2. The authenticated user's UID matches the document owner's UID
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+    
+    // ==========================================
+    // USER PROFILES (Optional - if needed)
+    // ==========================================
+    match /users/{uid} {
+      // Users can read and write their own profile
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+    
+    // ==========================================
+    // PUBLIC COLLECTIONS (Examples)
+    // ==========================================
+    
+    // Products - Anyone can read, only authenticated users can write
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Tasks - User-specific tasks
+    match /tasks/{taskId} {
+      allow read, write: if request.auth != null && 
+                           resource.data.userId == request.auth.uid;
+    }
+    
+    // ==========================================
+    // HELPER FUNCTIONS (Optional)
+    // ==========================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    function isValidItem() {
+      return request.resource.data.keys().hasAll(['title', 'createdAt']) &&
+             request.resource.data.title is string &&
+             request.resource.data.title.size() > 0 &&
+             request.resource.data.title.size() <= 100;
+    }
+    
+    // ==========================================
+    // ADVANCED EXAMPLE WITH VALIDATION
+    // ==========================================
+    
+    // Items with field validation
+    match /validated_items/{itemId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && 
+                      isValidItem() &&
+                      request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && 
+                      resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && 
+                      resource.data.userId == request.auth.uid;
+    }
+  }
+}
