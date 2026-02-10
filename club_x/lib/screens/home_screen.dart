@@ -20,6 +20,9 @@ import 'media_gallery_demo.dart';
 // CRUD Demo
 import 'crud_demo_screen.dart';
 
+// State Management
+import 'state_management_home.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -104,6 +107,13 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 30),
 
             /// DEMO BUTTONS
+            _navButton(
+              context,
+              icon: Icons.settings,
+              label: 'State Management Demo',
+              color: Colors.indigo,
+              page: const StateManagementHomeScreen(),
+            ),
             _navButton(
               context,
               icon: Icons.create,
